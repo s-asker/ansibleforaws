@@ -9,3 +9,8 @@
       register: keyout
     - debug:
         var: keyout
+
+    - name: Store Login Key
+      copy:
+        content: "{{keyout.key.private_key}}"
+        dest: ./sample-key.pem
