@@ -5,3 +5,4 @@
     - name: Sample ec2 key
       ec2_key:
         name: Sample
+      region: us-east-2
