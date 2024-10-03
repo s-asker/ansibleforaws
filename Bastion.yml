@@ -35,3 +35,16 @@
             ports: 22
             cidr_ip: "{{user_ip}}"
       register: bastionSG_out
+
+    - name: start an instance with a public IP address
+      amazon.aws.ec2_instance:
+        name: "bastion_host"
+        key_name: bastion_keypair
+        vpc_subnet_id: "{{pubsub1id}}"
+        instance_type: t2.micro
+        security_group: "{{bastionSG_out}}"
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{{bastion_ami}}"
+        tags:
+          Name: Bastion
