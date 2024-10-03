@@ -1,0 +1,9 @@
+- name: Create new nat gateway and allocate new EIP if a nat gateway does not yet exist in the subnet.
+  amazon.aws.ec2_vpc_nat_gateway:
+    state: "{{state}}"
+    subnet_id: "{{ pubsubout.results[0].subnet.id }}"
+    wait: true
+    region: "{{region}}"
+    if_exist_do_not_create: true
+  register: ngw_out
+
