@@ -36,8 +36,8 @@
         - { cidr: "{{PubSub3Cidr}}", az: "{{zone3}}", index: 3 }
       register: pubsubout
 
-      - debug:
-          var: pubsubout
+    - debug:
+        var: pubsubout
 
 
 
