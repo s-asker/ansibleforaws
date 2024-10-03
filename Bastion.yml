@@ -14,10 +14,8 @@
       ec2_key:
         name: bastion_keypair
         region: "{{region}}"
+        no_log: true
       register: bastion_key
-
-    - debug:
-        var: bastion_key
 
     - name: Store Login Key
       copy:
@@ -36,5 +34,5 @@
         rules:
           - proto: tcp
             ports: 22
-            cidr_ip: "{user_ip}"
+            cidr_ip: "{{user_ip}}"
       register: bastionSG_out
