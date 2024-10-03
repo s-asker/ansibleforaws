@@ -60,7 +60,7 @@
           Name: VPC_IGW
       register: igw_out
     - debug:
-        var: igw_out
+        var: pubsubout.results[0].subnet.id
 
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
