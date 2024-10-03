@@ -96,6 +96,5 @@
     - name: Saving Variables to a File
       copy:
         dest: vars/output_vars
-        content:
-"vpcid: {{ vpcout.vpc.id }}\npubsub1id: {{ pubsubout.results[0].subnet.id }}\npubsub2id: {{ pubsubout.results[1].subnet.id }}\npubsub3id: {{ pubsubout.results[2].subnet.id }}\nprivsub1id: {{ privsubout.results[0].subnet.id }}\nprivsub2id: {{ privsubout.results[1].subnet.id }}\nprivsub3id: {{ privsubout.results[2].subnet.id }}\nigwid: {{ igw_out.gateway_id }}\npubRTid: {{ publicRT_out.route_table.id }}"
+        content: "vpcid: {{ vpcout.vpc.id }}\npubsub1id: {{ pubsubout.results[0].subnet.id }}\npubsub2id: {{ pubsubout.results[1].subnet.id }}\npubsub3id: {{ pubsubout.results[2].subnet.id }}\nprivsub1id: {{ privsubout.results[0].subnet.id }}\nprivsub2id: {{ privsubout.results[1].subnet.id }}\nprivsub3id: {{ privsubout.results[2].subnet.id }}\nigwid: {{ igw_out.gateway_id }}\npubRTid: {{ publicRT_out.route_table.id }}"
 
