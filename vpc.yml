@@ -51,7 +51,14 @@
         - { cidr: "{{PrivSub3Cidr}}", az: "{{zone3}}", index: 3 }
       register: privsubout
 
-
+    - name: Create Internet gateway
+      amazon.aws.ec2_vpc_igw:
+        vpc_id: "{{vpcout.vpc.id}}"
+        state: "{{state}}"
+        region: "{{region}}"
+        tags:
+          Tag1: VPC_IGW
+      register: igw
 
 
 
