@@ -57,8 +57,26 @@
         state: "{{state}}"
         region: "{{region}}"
         tags:
-          Tag1: VPC_IGW
-      register: igw
+          Name: VPC_IGW
+      register: igw_out
+
+    - name: Set up public subnet route table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        tags:
+          Name: PublicRT
+        subnets:
+          - "{{ pubsubout.results[0].subnet.id }}"
+          - "{{ pubsubout.results[1].subnet.id }}"
+          - "{{ pubsubout.results[2].subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw_out.gateway_id }}"
+          - dest: ::/0
+            gateway_id: "{{ igw_out.gateway_id }}"
+      register: public_route_table
+
 
 
 
