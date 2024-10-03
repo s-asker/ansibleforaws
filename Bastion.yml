@@ -18,11 +18,11 @@
       register: bastion_key
 
     - name: Store Login Key
-        copy:
-          content: "{{bastion_key.private_key}}"
-          dest: ./bastion-key.pem
-          mode: 0600
-        when: bastion_key.changed
+      copy:
+        content: "{{bastion_key.private_key}}"
+        dest: ./bastion-key.pem
+        mode: 0600
+      when: bastion_key.changed
 
     - name: example2 ec2 group
       amazon.aws.ec2_security_group:
