@@ -30,14 +30,12 @@
         map_public: true
         tags:
           Name: "PubSub{{item.index}}"
-      with_items:
+      loop:
         - { cidr: "{{PubSub1Cidr}}", az: "{{zone1}}", index: 1 }
         - { cidr: "{{PubSub2Cidr}}", az: "{{zone2}}", index: 2 }
         - { cidr: "{{PubSub3Cidr}}", az: "{{zone3}}", index: 3 }
       register: pubsubout
 
-    - debug:
-        var: pubsubout
 
 
 
