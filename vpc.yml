@@ -20,14 +20,18 @@
     - debug:
         var: vpcout
 
-   # - name: Create subnet for database servers
-   #   amazon.aws.ec2_vpc_subnet:
-   #     state: "{{state}}"
-    #    vpc_id: "{{vpcout}}"
-    #    cidr: publc
-    #    tags:
-     #     Name: Database Subnet
-     # register: database_subnet
+    - name: Create first public subnet for EC2 Instances
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        cidr: "{{PubSub1Cidr}}"
+        region: "{{region}}"
+        az: "{{zone1}}"
+        map_public: true
+        tags:
+          Name: PubSub1
+
+      register: pubsub1out
 
 
 
