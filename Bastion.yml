@@ -6,8 +6,8 @@
     - name: Import Bastion Variables
       include_vars: vars/bastion_setup.yml
 
-    - name: Import VPC Variables
-      include_vars: vars/vpc_setup.yml
+    - name: Import VPC Resources IDs
+      include_vars: vars/output_vars
 
     - name: Create a new EC2 key pair for bastion host
       # use no_log to avoid private key being displayed into output
