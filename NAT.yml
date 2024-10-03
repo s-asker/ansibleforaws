@@ -1,3 +1,5 @@
+
+
 - name: Create new nat gateway and allocate new EIP if a nat gateway does not yet exist in the subnet.
   amazon.aws.ec2_vpc_nat_gateway:
     state: "{{state}}"
@@ -7,3 +9,19 @@
     if_exist_do_not_create: true
   register: ngw_out
 
+- name: Set up private subnet route table
+  amazon.aws.ec2_vpc_route_table:
+    vpc_id: "{{vpcout.vpc.id}}"
+    region: "{{region}}"
+    tags:
+      Name: PrivateRT
+    subnets:
+      - "{{ privsubout.results[0].subnet.id }}"
+      - "{{ privsubout.results[1].subnet.id }}"
+      - "{{ privsubout.results[2].subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ ngw_out.gateway_id }}"
+      - dest: ::/0
+        gateway_id: "{{ ngw_out.gateway_id }}"
+  register: privateRT_out
