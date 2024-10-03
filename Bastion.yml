@@ -11,10 +11,9 @@
 
     - name: Create a new EC2 key pair for bastion host
       # use no_log to avoid private key being displayed into output
-      amazon.aws.ec2_key:
+      ec2_key:
         name: bastion_keypair
         region: "{{region}}"
-
       register: bastion_key
 
     - debug:
@@ -25,6 +24,7 @@
         content: "{{bastion_key.key.private_key}}"
         dest: ./bastion-key.pem
         mode: 0600
+      when: bastion_key.changed
 
 
     - name: example2 ec2 group
