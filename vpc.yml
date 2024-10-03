@@ -97,13 +97,13 @@
       copy:
         dest: vars/output_vars
         content:
-         "vpcid: {{ vpcout.vpc.id }}
-          pubsub1id: {{ pubsubout.results[0].subnet.id }}
-          pubsub2id: {{ pubsubout.results[1].subnet.id }}
-          pubsub3id: {{ pubsubout.results[2].subnet.id }}
-          privsub1id: {{ privsubout.results[0].subnet.id }}
-          privsub2id: {{ privsubout.results[1].subnet.id }}
-          privsub3id: {{ privsubout.results[2].subnet.id }}
-          igwid: {{ igw_out.gateway_id }}
-          pubRTid: {{ publicRT_out.route_table.id }}"
+         "vpcid: {{ vpcout.vpc.id }}\n
+pubsub1id: {{ pubsubout.results[0].subnet.id }}\n
+pubsub2id: {{ pubsubout.results[1].subnet.id }}\n
+pubsub3id: {{ pubsubout.results[2].subnet.id }}\n
+privsub1id: {{ privsubout.results[0].subnet.id }}\n
+privsub2id: {{ privsubout.results[1].subnet.id }}\n
+privsub3id: {{ privsubout.results[2].subnet.id }}\n
+igwid: {{ igw_out.gateway_id }}\n
+pubRTid: {{ publicRT_out.route_table.id }}"
 
