@@ -79,21 +79,21 @@
       register: publicRT_out
 
     - name: Set up private subnet route table
-        amazon.aws.ec2_vpc_route_table:
-          vpc_id: "{{vpcout.vpc.id}}"
-          region: "{{region}}"
-          tags:
-            Name: PrivateRT
-          subnets:
-            - "{{ privsubout.results[0].subnet.id }}"
-            - "{{ privsubout.results[1].subnet.id }}"
-            - "{{ privsubout.results[2].subnet.id }}"
-          routes:
-            - dest: 0.0.0.0/0
-              gateway_id: "{{ ngw_out.gateway_id }}"
-            - dest: ::/0
-              gateway_id: "{{ ngw_out.gateway_id }}"
-        register: privateRT_out
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{vpcout.vpc.id}}"
+        region: "{{region}}"
+        tags:
+          Name: PrivateRT
+        subnets:
+          - "{{ privsubout.results[0].subnet.id }}"
+          - "{{ privsubout.results[1].subnet.id }}"
+          - "{{ privsubout.results[2].subnet.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ ngw_out.gateway_id }}"
+          - dest: ::/0
+            gateway_id: "{{ ngw_out.gateway_id }}"
+      register: privateRT_out
 
 
 
