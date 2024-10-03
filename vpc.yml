@@ -20,7 +20,7 @@
    # - debug:
    #     var: vpcout
 
-    - name: Create public subnets for EC2 Instances
+    - name: Create public subnets in Project VPC
       amazon.aws.ec2_vpc_subnet:
         state: "{{state}}"
         vpc_id: "{{vpcout.vpc.id}}"
@@ -35,6 +35,21 @@
         - { cidr: "{{PubSub2Cidr}}", az: "{{zone2}}", index: 2 }
         - { cidr: "{{PubSub3Cidr}}", az: "{{zone3}}", index: 3 }
       register: pubsubout
+
+    - name: Create private subnets in Project VPC
+      amazon.aws.ec2_vpc_subnet:
+        state: "{{state}}"
+        vpc_id: "{{vpcout.vpc.id}}"
+        cidr: "{{item.cidr}}"
+        region: "{{region}}"
+        az: "{{item.az}}"
+        tags:
+          Name: "PrivSub{{item.index}}"
+      loop:
+        - { cidr: "{{PrivSub1Cidr}}", az: "{{zone1}}", index: 1 }
+        - { cidr: "{{PrivSub2Cidr}}", az: "{{zone2}}", index: 2 }
+        - { cidr: "{{PrivSub3Cidr}}", az: "{{zone3}}", index: 3 }
+      register: privsubout
 
 
 
