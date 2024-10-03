@@ -4,5 +4,6 @@ bastion_ami: ami-037774efca2da0726
 
 region: us-east2
 
+
 user_ip: 45.245.247.136/32
 
