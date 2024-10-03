@@ -5,6 +5,7 @@
     - name: Import VPC Variables
       include_vars: vars/vpc_setup
 
+
     - name: Create the Project VPC
       amazon.aws.ec2_vpc_net:
         name: "{{vpc_name}}"
