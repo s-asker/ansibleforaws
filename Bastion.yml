@@ -14,7 +14,6 @@
       ec2_key:
         name: bastion_keypair
         region: "{{region}}"
-        no_log: true
       register: bastion_key
 
     - name: Store Login Key
