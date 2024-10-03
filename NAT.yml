@@ -25,3 +25,4 @@
       - dest: ::/0
         gateway_id: "{{ ngw_out.gateway_id }}"
   register: privateRT_out
+
