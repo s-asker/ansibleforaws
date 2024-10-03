@@ -59,7 +59,8 @@
         tags:
           Name: VPC_IGW
       register: igw_out
-
+    - debug:
+        var: igw_out
 
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
