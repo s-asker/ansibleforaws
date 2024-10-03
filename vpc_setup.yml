@@ -3,6 +3,7 @@ vpc_name: "trial-vpc"
 # VPC Range
 vpcCidr: '172.20.0.0/16'
 
+
 # Subnets Range
 PubSub1Cidr: 172.20.1.0/24
 PubSub2Cidr: 172.20.2.0/24
