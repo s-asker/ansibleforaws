@@ -17,22 +17,26 @@
         dns_hostnames: yes
       register: vpcout
 
-    - debug:
-        var: vpcout
+   # - debug:
+   #     var: vpcout
 
-    - name: Create first public subnet for EC2 Instances
+    - name: Create public subnets for EC2 Instances
       amazon.aws.ec2_vpc_subnet:
         state: "{{state}}"
         vpc_id: "{{vpcout.vpc.id}}"
-        cidr: "{{PubSub1Cidr}}"
+        cidr: "{{item.cidr}}"
         region: "{{region}}"
-        az: "{{zone1}}"
+        az: "{{item.az}}"
         map_public: true
         tags:
-          Name: PubSub1
+          Name: "PubSub{{item.index}}"
+      with_items:
+        - { cidr: "{{PubSub1Cidr}}", az: "{{zone1}}", index: 1 }
+        - { cidr: "{{PubSub2Cidr}}", az: "{{zone2}}", index: 2 }
+        - { cidr: "{{PubSub3Cidr}}", az: "{{zone3}}", index: 3 }
+      register: pubsubout
 
 
-      register: pubsub1out
 
 
 
