@@ -39,6 +39,7 @@
     - name: start an instance with a public IP address
       amazon.aws.ec2_instance:
         name: "bastion_host"
+        region: "{{region}}"
         key_name: bastion_keypair
         vpc_subnet_id: "{{pubsub1id}}"
         instance_type: t2.micro
