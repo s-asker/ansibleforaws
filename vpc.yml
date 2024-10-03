@@ -78,8 +78,8 @@
             gateway_id: "{{ igw_out.gateway_id }}"
       register: publicRT_out
 
-      - debug:
-          var: publicRT_out
+    - debug:
+        var: publicRT_out
 
 
 
