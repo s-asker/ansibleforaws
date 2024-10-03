@@ -43,7 +43,7 @@
         key_name: bastion_keypair
         vpc_subnet_id: "{{pubsub1id}}"
         instance_type: t2.micro
-        security_group: "{{bastionSG_out}}"
+        security_group: "{{bastionSG_out.group_id}}"
         network_interfaces:
           - assign_public_ip: true
         image_id: "{{bastion_ami}}"
