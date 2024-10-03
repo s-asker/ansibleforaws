@@ -5,3 +5,33 @@
   tasks:
     - name: Import Bastion Variables
       include_vars: vars/bastion_setup.yml
+
+    - name: Import VPC Variables
+        include_vars: vars/vpc_setup.yml
+
+    - name: Create a new EC2 key pair for bastion host
+      # use no_log to avoid private key being displayed into output
+      amazon.aws.ec2_key:
+        name: bastion_keypair
+        region: "{{region}}"
+      no_log: true
+      register: bastion_key
+
+    - name: Store Login Key
+        copy:
+          content: "{{bastion_key.private_key}}"
+          dest: ./bastion-key.pem
+          mode: 0600
+        when: bastion_key.changed
+
+    - name: example2 ec2 group
+      amazon.aws.ec2_security_group:
+        name: bastion-sg
+        description: Security Group of Bastion Host
+        vpc_id: "{{vpcid}}"
+        region: "{{region}}"
+        rules:
+          - proto: tcp
+            ports: 22
+            cidr_ip: "{user_ip}"
+      register: bastionSG_out
