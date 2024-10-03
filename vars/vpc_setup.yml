@@ -1,5 +1,6 @@
 vpc_name: "trial-vpc"
 
+
 # VPC Range
 vpcCidr: '172.20.0.0/16'
 
