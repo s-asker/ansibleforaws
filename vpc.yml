@@ -59,8 +59,7 @@
         tags:
           Name: VPC_IGW
       register: igw_out
-    - debug:
-        var: pubsubout.results[0].subnet.id
+
 
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
@@ -77,7 +76,10 @@
             gateway_id: "{{ igw_out.gateway_id }}"
           - dest: ::/0
             gateway_id: "{{ igw_out.gateway_id }}"
-      register: public_route_table
+      register: publicRT_out
+
+      - debug:
+          var: publicRT_out
 
 
 
