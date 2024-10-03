@@ -19,7 +19,7 @@
 
     - name: Store Login Key
       copy:
-        content: "{{bastion_key.private_key}}"
+        content: "{{bastion_key.key.private_key}}"
         dest: ./bastion-key.pem
         mode: 0600
       when: bastion_key.changed
