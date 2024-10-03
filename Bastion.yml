@@ -17,6 +17,9 @@
 
       register: bastion_key
 
+    - debug:
+        var: bastion_key
+
     - name: Store Login Key
       copy:
         content: "{{bastion_key.key.private_key}}"
