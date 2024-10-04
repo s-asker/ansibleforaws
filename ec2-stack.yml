@@ -31,9 +31,6 @@
         region: "{{region}}"
         rules:
           - proto: tcp
-            ports: 22
-            cidr_ip: "{{user_ip}}"
-          - proto: tcp
             from_port: 80
             to_port: 80
             cidr_ip: 0.0.0.0/0
@@ -49,12 +46,12 @@
         rules:
           - proto: tcp
             ports: 22
-            group_id: "{{LBsg_out.group_id}}"
+            group_id: "{{bastionsgOUT}}"
 
           - proto: tcp
             from_port: 80
             to_port: 80
-            group_id: "{{bastionsgOUT}}"
+            group_id: "{{LBsg_out.group_id}}"
       register: EC2sg_out
 
     - name: Update stack security group for internal traffic
