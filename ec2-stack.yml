@@ -55,4 +55,4 @@
             from_port: 80
             to_port: 80
             group_id: "{{bastionSG_out.group_id}}"
-      register: LBsg_out
+      register: EC2sg_out
