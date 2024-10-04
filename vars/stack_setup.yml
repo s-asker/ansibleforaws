@@ -1,0 +1,8 @@
+region: us-east-2
+
+# AMI for each service
+nginx_ami: ami-00eb69d236edcfaf8
+tomcat_ami: ami-00eb69d236edcfaf8
+memcache_ami: ami-00eb69d236edcfaf8
+rmq_ami: ami-00eb69d236edcfaf8
+mysql_ami: ami-00eb69d236edcfaf8

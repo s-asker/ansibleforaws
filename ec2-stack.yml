@@ -1,0 +1,25 @@
+---
+- name: Setup Project Stack
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Import VPC Setup Variables
+      include_vars: vars/vpc-output_vars
+
+    - name: Import Site Setup Variables
+      include_vars: vars/stack_setup.yml
+
+    - name: Create EC2 keypair for site instances
+      ec2_key:
+        name: sitekey
+        region: "{{region}}"
+      register: sitekey_out
+
+    - name: Save login key into file
+      copy:
+        content: "{{sitekey_out.key.private_key}}"
+        dest: "./site_loginkey.pem"
+        mode: 0600
+      when: sitekey_out.changed
+
