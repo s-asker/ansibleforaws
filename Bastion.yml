@@ -49,3 +49,10 @@
         image_id: "{{bastion_ami}}"
         tags:
           Name: Bastion
+
+    - name: Add a new variable to the vars/vpc-output_vars file
+        blockinfile:
+          path: "vars/vpc-output_vars"
+          block: |
+            bastionsgOUT: "{{bastionSG_out.group_id}}"
+          insertafter: EOF

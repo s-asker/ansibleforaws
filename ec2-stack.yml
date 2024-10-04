@@ -23,3 +23,36 @@
         mode: 0600
       when: sitekey_out.changed
 
+    - name: Create security group for Load Balancer
+      amazon.aws.ec2_security_group:
+        name: LB-SG
+        description: Security Group of LB
+        vpc_id: "{{vpcid}}"
+        region: "{{region}}"
+        rules:
+          - proto: tcp
+            ports: 22
+            cidr_ip: "{{user_ip}}"
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: LBsg_out
+
+    - name: Create security group for Site Stack
+      amazon.aws.ec2_security_group:
+        name: EC2-SG
+        description: Security group of site instances
+        vpc_id: "{{vpcid}}"
+        region: "{{region}}"
+        purge_rules: no
+        rules:
+          - proto: tcp
+            ports: 22
+            group_id: "{{LBsg_out.group_id}}"
+
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            group_id: "{{bastionSG_out.group_id}}"
+      register: LBsg_out
