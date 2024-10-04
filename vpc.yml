@@ -16,6 +16,8 @@
         tenancy: default
         dns_support: yes
         dns_hostnames: yes
+        tags:
+          Project: AnsibleCloudProject
       register: vpcout
 
    # - debug:
