@@ -4,7 +4,7 @@
   gather_facts: False
   tasks:
     - name: Import Bastion Variables
-      include_vars: vars/bastion_setup.yml
+      include_vars: vars/vpc_setup
 
     - name: Import VPC Resources IDs
       include_vars: vars/output_vars
