@@ -44,7 +44,7 @@ for vpc_id in $vpc_ids; do
   if [ -n "$route_table_ids" ]; then
     echo "Deleting route tables: $route_table_ids"
     for route_table_id in $route_table_ids; do
-      aws ec2 delete-route-table --region $region --route-table-id $route_table_id
+      aws ec2 delete-route-table --region $region --route-table-id $route_table_id >> /dev/null  # Suppress errors
     done
   fi
 
