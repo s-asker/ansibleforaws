@@ -54,5 +54,5 @@
       blockinfile:
         path: "vars/vpc-output_vars"
         block: |
-          bastionsgOUT: "{{bastionSG_out.group_id}}"
+          bastionsgOUT: {{bastionSG_out.group_id}}
         insertafter: EOF
