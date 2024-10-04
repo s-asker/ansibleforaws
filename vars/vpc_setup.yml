@@ -22,3 +22,10 @@ zone2: "us-east-2b"
 zone3: "us-east-2c"
 
 state: present
+
+# AMI ID
+bastion_ami: ami-037774efca2da0726
+
+
+# My IP Address
+user_ip: 45.245.247.136/32
