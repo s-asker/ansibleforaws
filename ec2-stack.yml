@@ -54,5 +54,17 @@
           - proto: tcp
             from_port: 80
             to_port: 80
-            group_id: "{{bastionSG_out.group_id}}"
+            group_id: "{{bastionsgOUT}}"
+      register: EC2sg_out
+
+    - name: Update stack security group for internal traffic
+      amazon.aws.ec2_security_group:
+        name: EC2-SG
+        description: Security group of site instances
+        vpc_id: "{{vpcid}}"
+        region: "{{region}}"
+        purge_rules: no
+        rules:
+          - proto: all
+            group_id: "{{EC2sg_out.group_id}}"
       register: EC2sg_out
