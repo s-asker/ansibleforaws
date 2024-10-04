@@ -39,8 +39,8 @@ for vpc_id in $vpc_ids; do
     done
   fi
 
-  # Delete custom route tables in the VPC (the main route table cannot be deleted)
-  route_table_ids=$(aws ec2 describe-route-tables --region $region --filters "Name=vpc-id,Values=$vpc_id" --query "RouteTables[?Associations[?Main==\`false\`]].RouteTableId" --output text)
+  # Delete all route tables in the VPC, including the main route table
+  route_table_ids=$(aws ec2 describe-route-tables --region $region --filters "Name=vpc-id,Values=$vpc_id" --query "RouteTables[].RouteTableId" --output text)
   if [ -n "$route_table_ids" ]; then
     echo "Deleting route tables: $route_table_ids"
     for route_table_id in $route_table_ids; do
@@ -61,4 +61,3 @@ for vpc_id in $vpc_ids; do
   echo "Deleting VPC with ID: $vpc_id"
   aws ec2 delete-vpc --region $region --vpc-id $vpc_id
 done
-
