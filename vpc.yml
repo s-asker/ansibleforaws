@@ -16,10 +16,12 @@
         tenancy: default
         dns_support: yes
         dns_hostnames: yes
+        tags:
+          Project: AnsibleCloudProject
       register: vpcout
 
-   # - debug:
-   #     var: vpcout
+    # - debug:
+    #     var: vpcout
 
     - name: Create public subnets in Project VPC
       amazon.aws.ec2_vpc_subnet:
