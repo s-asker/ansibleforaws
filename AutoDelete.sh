@@ -49,13 +49,32 @@ for vpc_id in $vpc_ids; do
   fi
 
   # Delete all security groups in the VPC (the default security group cannot be deleted)
+    # Delete all security groups in the VPC (the default security group cannot be deleted)
   security_group_ids=$(aws ec2 describe-security-groups --region $region --filters "Name=vpc-id,Values=$vpc_id" --query "SecurityGroups[?GroupName!=\`default\`].GroupId" --output text)
   if [ -n "$security_group_ids" ]; then
     echo "Deleting security groups: $security_group_ids"
     for sg_id in $security_group_ids; do
+
+      # Revoke all inbound rules
+      inbound_rules=$(aws ec2 describe-security-groups --region $region --group-ids $sg_id --query "SecurityGroups[].IpPermissions" --output json)
+      if [ "$inbound_rules" != "[]" ]; then
+        echo "Revoking inbound rules for security group: $sg_id"
+        aws ec2 revoke-security-group-ingress --region $region --group-id $sg_id --ip-permissions "$inbound_rules"
+      fi
+
+      # Revoke all outbound rules
+      outbound_rules=$(aws ec2 describe-security-groups --region $region --group-ids $sg_id --query "SecurityGroups[].IpPermissionsEgress" --output json)
+      if [ "$outbound_rules" != "[]" ]; then
+        echo "Revoking outbound rules for security group: $sg_id"
+        aws ec2 revoke-security-group-egress --region $region --group-id $sg_id --ip-permissions "$outbound_rules"
+      fi
+
+      # Now delete the security group
+      echo "Deleting security group: $sg_id"
       aws ec2 delete-security-group --region $region --group-id $sg_id
     done
   fi
+
 
   # Now, delete the VPC itself
   echo "Deleting VPC with ID: $vpc_id"
