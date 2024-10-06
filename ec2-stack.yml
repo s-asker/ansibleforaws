@@ -160,7 +160,7 @@
         name: webtargetgroup
         protocol: http
         port: 80
-        vpc_id: vpcid
+        vpc_id: "{{vpcid}}"
         targets:
           - Id: "{{db01_out.instances[0].id}}"
             Port: 80
