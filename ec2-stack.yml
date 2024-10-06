@@ -190,11 +190,11 @@
       blockinfile:
         path: "provisioning/group_vars/hostsip"
         block: |
-          web01: {{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          app01: {{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          db01: {{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          rmq01: {{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          mc01: {{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          web01: {{web01_out.instances[0].network_interfaces[0].private_ip_address}}
+          app01: {{app01_out.instances[0].network_interfaces[0].private_ip_address}}
+          db01: {{db01_out.instances[0].network_interfaces[0].private_ip_address}}
+          rmq01: {{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
+          mc01: {{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
 
     - name: Copy login key to provisioning directory
       copy:
@@ -206,11 +206,11 @@
       blockinfile:
         path: "provisioning/inventory"
         block: |
-          web01 ansible_host={{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          app01 ansible_host={{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          rmq01 ansible_host={{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          mc01 ansible_host={{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          db01 ansible_host={{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          web01 ansible_host={{web01_out.instances[0].network_interfaces[0].private_ip_address}}
+          app01 ansible_host={{app01_out.instances[0].network_interfaces[0].private_ip_address}}
+          rmq01 ansible_host={{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
+          mc01 ansible_host={{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
+          db01 ansible_host={{db01_out.instances[0].network_interfaces[0].private_ip_address}}
           cntl ansible_host=127.0.0.1 ansible_connection=local
           [websrvgrp]
           web01
