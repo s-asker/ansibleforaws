@@ -155,4 +155,34 @@
     - debug:
         var: db01_out
 
+    - name: Create a target group with a default health check
+      community.aws.elb_target_group:
+        name: webtargetgroup
+        protocol: http
+        port: 80
+        vpc_id: vpcid
+        targets:
+          - Id: "{{db01_out.instances[0].id}}"
+            Port: 80
+        state: present
+
+    - name: Create the Application Load Balancer from the web instances
+      amazon.aws.elb_application_lb:
+        name: ALB
+        security_groups:
+          - "{{ LBsg_out.group_id }}"
+        subnets:
+          - "{{pubsub1id}}"
+          - "{{pubsub2id}}"
+          - "{{pubsub3id}}"
+        listeners:
+          - Protocol: HTTP # Required. The protocol for connections from clients to the load balancer (HTTP or HTTPS) (case-sensitive).
+            Port: 80 # Required. The port on which the load balancer is listening.
+            # The security policy that defines which ciphers and protocols are supported. The default is the current predefined security policy.
+            DefaultActions:
+              - Type: forward # Required.
+                TargetGroupName: webtargetgroup
+        state: present
+
+
 
