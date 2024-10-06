@@ -187,15 +187,15 @@
         state: present
 
     - name: Insert Private IPs of Web Machines to a file
-        blockinfile:
-          path: "provisioning/group_vars/hostsip"
-          block: |
-            web01: {{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            app01: {{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            db01: {{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            rmq01: {{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            mc01: {{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-          insertafter: EOF
+      blockinfile:
+        path: "provisioning/group_vars/hostsip"
+        block: |
+          web01: {{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          app01: {{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          db01: {{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          rmq01: {{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+          mc01: {{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        insertafter: EOF
 
     - name: Copy login key to provisioning directory
       copy:
@@ -204,45 +204,42 @@
         mode: 0400
 
     - name: Insert Private IPs of Web Machines to a file
-        blockinfile:
-          path: "provisioning/group_vars/hostsip"
-          block: |
-            web01 ansible_host={{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            app01 ansible_host={{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            rmq01 ansible_host={{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            mc01 ansible_host={{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            db01 ansible_host={{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-            cntl ansible_host=127.0.0.1 ansible_connection=local
-
-            [websrvgrp]
-            web01
-            
-            [appsrvgrp]
-            app01
-            
-            [rmqsrvgrp]
-            rmq01
-            
-            [mcsrvgrp]
-            mc01
-            
-            [dbsrvgrp]
-            db01
-            
-            [control]
-            cntl
-            
-            [stack_inst:children]
-            websrvgrp
-            appsrvgrp
-            rmqsrvgrp
-            mcsrvgrp
-            dbsrvgrp
-  
-            [stack_inst:vars]
-            ansible_user=ubuntu
-            ansible_ssh_private_key_file=site_loginkey.pem
-          insertafter: EOF
-
+      blockinfile:
+      path: "provisioning/group_vars/hostsip"
+      block: |
+        web01 ansible_host={{web01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        app01 ansible_host={{app01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        rmq01 ansible_host={{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        mc01 ansible_host={{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        db01 ansible_host={{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
+        cntl ansible_host=127.0.0.1 ansible_connection=local
+        [websrvgrp]
+        web01
+        
+        [appsrvgrp]
+        app01
+        
+        [rmqsrvgrp]
+        rmq01
+        
+        [mcsrvgrp]
+        mc01
+        
+        [dbsrvgrp]
+        db01
+        
+        [control]
+        cntl
+        
+        [stack_inst:children]
+        websrvgrp
+        appsrvgrp
+        rmqsrvgrp
+        mcsrvgrp
+        dbsrvgrp
+        [stack_inst:vars]
+        ansible_user=ubuntu
+        ansible_ssh_private_key_file=site_loginkey.pem
+      insertafter: EOF
 
 
