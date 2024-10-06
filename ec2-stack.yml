@@ -195,7 +195,6 @@
           db01: {{db01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
           rmq01: {{rmq01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
           mc01: {{mc01_out.instances[0].instance_id.network_interfaces[0].private_ip_address}}
-        insertafter: EOF
 
     - name: Copy login key to provisioning directory
       copy:
@@ -240,6 +239,5 @@
         [stack_inst:vars]
         ansible_user=ubuntu
         ansible_ssh_private_key_file=site_loginkey.pem
-      insertafter: EOF
 
 
