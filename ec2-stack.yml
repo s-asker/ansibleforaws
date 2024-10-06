@@ -199,7 +199,7 @@
     - name: Copy login key to provisioning directory
       copy:
         src: "./site_loginkey.pem"
-        dest: "/provisioning/site_loginkey.pem"
+        dest: "provisioning/site_loginkey.pem"
         mode: 0400
 
     - name: Create Dynamic Inventory
