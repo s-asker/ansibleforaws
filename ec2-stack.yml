@@ -163,7 +163,7 @@
         port: 80
         vpc_id: "{{vpcid}}"
         targets:
-          - Id: "{{db01_out.instances[0].instance_id}}"
+          - Id: "{{web01_out.instances[0].instance_id}}"
             Port: 80
         state: present
 
