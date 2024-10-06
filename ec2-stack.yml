@@ -84,73 +84,73 @@
 
 
     - name: Creating Tomcat instance (app01)
-        amazon.aws.ec2_instance:
-          name: "app01"
-          region: "{{region}}"
-          key_name: sitekey
-          wait: yes
-          exact_count: 1
-          vpc_subnet_id: "{{pubsub1id}}"
-          instance_type: t2.micro
-          security_group: "{{EC2sg_out.group_id}}"
-          network_interfaces:
-            - assign_public_ip: true
-          image_id: "{ { tomcat_ami } }"
-          tags:
-            Project: Web
-        register: app01_out
+      amazon.aws.ec2_instance:
+        name: "app01"
+        region: "{{region}}"
+        key_name: sitekey
+        wait: yes
+        exact_count: 1
+        vpc_subnet_id: "{{pubsub1id}}"
+        instance_type: t2.micro
+        security_group: "{{EC2sg_out.group_id}}"
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{ { tomcat_ami } }"
+        tags:
+          Project: Web
+      register: app01_out
 
     - name: Creating Memcached instance (mc01)
-        amazon.aws.ec2_instance:
-          name: "mc01"
-          region: "{{region}}"
-          key_name: sitekey
-          wait: yes
-          exact_count: 1
-          vpc_subnet_id: "{{pubsub1id}}"
-          instance_type: t2.micro
-          security_group: "{{EC2sg_out.group_id}}"
-          network_interfaces:
-            - assign_public_ip: true
-          image_id: "{ { memcache_ami } }"
-          tags:
-            Project: Web
-        register: mc01_out
+      amazon.aws.ec2_instance:
+        name: "mc01"
+        region: "{{region}}"
+        key_name: sitekey
+        wait: yes
+        exact_count: 1
+        vpc_subnet_id: "{{pubsub1id}}"
+        instance_type: t2.micro
+        security_group: "{{EC2sg_out.group_id}}"
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{ { memcache_ami } }"
+        tags:
+          Project: Web
+      register: mc01_out
 
 
     - name: Creating rabbitMQ instance (rmq01)
-        amazon.aws.ec2_instance:
-          name: "rmq01"
-          region: "{{region}}"
-          key_name: sitekey
-          wait: yes
-          exact_count: 1
-          vpc_subnet_id: "{{pubsub1id}}"
-          instance_type: t2.micro
-          security_group: "{{EC2sg_out.group_id}}"
-          network_interfaces:
-            - assign_public_ip: true
-          image_id: "{ { rmq_ami } }"
-          tags:
-            Project: Web
-        register: rmq01_out
+      amazon.aws.ec2_instance:
+        name: "rmq01"
+        region: "{{region}}"
+        key_name: sitekey
+        wait: yes
+        exact_count: 1
+        vpc_subnet_id: "{{pubsub1id}}"
+        instance_type: t2.micro
+        security_group: "{{EC2sg_out.group_id}}"
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{ { rmq_ami } }"
+        tags:
+          Project: Web
+      register: rmq01_out
 
     - name: Creating MYSQL DB instance (db01)
-        amazon.aws.ec2_instance:
-          name: "db01"
-          region: "{{region}}"
-          key_name: sitekey
-          wait: yes
-          exact_count: 1
-          vpc_subnet_id: "{{pubsub1id}}"
-          instance_type: t2.micro
-          security_group: "{{EC2sg_out.group_id}}"
-          network_interfaces:
-            - assign_public_ip: true
-          image_id: "{ { db_ami } }"
-          tags:
-            Project: Web
-        register: db01_out
+      amazon.aws.ec2_instance:
+        name: "db01"
+        region: "{{region}}"
+        key_name: sitekey
+        wait: yes
+        exact_count: 1
+        vpc_subnet_id: "{{pubsub1id}}"
+        instance_type: t2.micro
+        security_group: "{{EC2sg_out.group_id}}"
+        network_interfaces:
+          - assign_public_ip: true
+        image_id: "{ { db_ami } }"
+        tags:
+          Project: Web
+      register: db01_out
 
     - debug:
         var: db01_out
