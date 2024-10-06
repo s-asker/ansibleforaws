@@ -158,6 +158,7 @@
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
         name: webtargetgroup
+        region: "{{region}}"
         protocol: http
         port: 80
         vpc_id: "{{vpcid}}"
@@ -169,6 +170,7 @@
     - name: Create the Application Load Balancer from the web instances
       amazon.aws.elb_application_lb:
         name: ALB
+        region: "{{region}}"
         security_groups:
           - "{{ LBsg_out.group_id }}"
         subnets:
