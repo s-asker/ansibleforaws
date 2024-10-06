@@ -39,6 +39,27 @@ for vpc_id in $vpc_ids; do
     done
   fi
 
+  # Delete all load balancers in the VPC
+  lb_arns=$(aws elbv2 describe-load-balancers --region $region --query "LoadBalancers[?VpcId=='$vpc_id'].LoadBalancerArn" --output text)
+  if [ -n "$lb_arns" ]; then
+    echo "Deleting Load Balancers: $lb_arns"
+    for lb_arn in $lb_arns; do
+      # First, delete any associated target groups
+      tg_arns=$(aws elbv2 describe-target-groups --region $region --load-balancer-arn $lb_arn --query "TargetGroups[].TargetGroupArn" --output text)
+      if [ -n "$tg_arns" ]; then
+        echo "Deleting Target Groups: $tg_arns"
+        for tg_arn in $tg_arns; do
+          aws elbv2 delete-target-group --region $region --target-group-arn $tg_arn
+        done
+      fi
+
+      # Now delete the load balancer
+      aws elbv2 delete-load-balancer --region $region --load-balancer-arn $lb_arn
+      # Wait for load balancer deletion to complete
+      aws elbv2 wait load-balancers-deleted --region $region --load-balancer-arns $lb_arn
+    done
+  fi
+
   # Delete all route tables in the VPC, including the main route table
   route_table_ids=$(aws ec2 describe-route-tables --region $region --filters "Name=vpc-id,Values=$vpc_id" --query "RouteTables[].RouteTableId" --output text)
   if [ -n "$route_table_ids" ]; then
@@ -49,7 +70,6 @@ for vpc_id in $vpc_ids; do
   fi
 
   # Delete all security groups in the VPC (the default security group cannot be deleted)
-    # Delete all security groups in the VPC (the default security group cannot be deleted)
   security_group_ids=$(aws ec2 describe-security-groups --region $region --filters "Name=vpc-id,Values=$vpc_id" --query "SecurityGroups[?GroupName!=\`default\`].GroupId" --output text)
   if [ -n "$security_group_ids" ]; then
     echo "Deleting security groups: $security_group_ids"
@@ -74,7 +94,6 @@ for vpc_id in $vpc_ids; do
       aws ec2 delete-security-group --region $region --group-id $sg_id
     done
   fi
-
 
   # Now, delete the VPC itself
   echo "Deleting VPC with ID: $vpc_id"
