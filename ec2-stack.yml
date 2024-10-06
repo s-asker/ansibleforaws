@@ -147,7 +147,7 @@
         security_group: "{{EC2sg_out.group_id}}"
         network_interfaces:
           - assign_public_ip: true
-        image_id: "{{db_ami}}"
+        image_id: "{{mysql_ami}}"
         tags:
           Project: Web
       register: db01_out
