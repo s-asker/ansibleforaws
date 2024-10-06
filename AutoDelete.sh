@@ -44,7 +44,17 @@ for vpc_id in $vpc_ids; do
   if [ -n "$lb_arns" ]; then
     echo "Deleting Load Balancers: $lb_arns"
     for lb_arn in $lb_arns; do
-      # First, delete any associated target groups
+
+      # First, delete any associated listeners
+      listener_arns=$(aws elbv2 describe-listeners --region $region --load-balancer-arn $lb_arn --query "Listeners[].ListenerArn" --output text)
+      if [ -n "$listener_arns" ]; then
+        echo "Deleting listeners for Load Balancer: $lb_arn"
+        for listener_arn in $listener_arns; do
+          aws elbv2 delete-listener --region $region --listener-arn $listener_arn
+        done
+      fi
+
+      # Then, delete any associated target groups
       tg_arns=$(aws elbv2 describe-target-groups --region $region --load-balancer-arn $lb_arn --query "TargetGroups[].TargetGroupArn" --output text)
       if [ -n "$tg_arns" ]; then
         echo "Deleting Target Groups: $tg_arns"
@@ -54,6 +64,7 @@ for vpc_id in $vpc_ids; do
       fi
 
       # Now delete the load balancer
+      echo "Deleting Load Balancer: $lb_arn"
       aws elbv2 delete-load-balancer --region $region --load-balancer-arn $lb_arn
       # Wait for load balancer deletion to complete
       aws elbv2 wait load-balancers-deleted --region $region --load-balancer-arns $lb_arn
