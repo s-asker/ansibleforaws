@@ -9,11 +9,12 @@
     - name: Find VPCs by Tag
       amazon.aws.ec2_vpc_net_info:
         filters:
-          tag:Project: AnsibleCloudProject
+          tag: Project
+          value: AnsibleCloudProject
       register: vpc_facts
 
     - name: Find all resources with the same tag
-      amazon.aws.ec2_tag_facts:
+      amazon.aws.ec2_vpc_net_info:
         filters:
           key: Project
           value: AnsibleCloudProject
@@ -22,10 +23,8 @@
     - name: Delete all resources based on tags
       block:
         - name: Check resource type and delete
-          ansible.builtin.include_tasks: delete_resources.yml
-          vars:
-            resource_type: "{{ item.resource_type }}"
-            resource_id: "{{ item.id }}"
+          amazon.aws.ec2_{{ item.resource_type }}:
+            state: absent
             region: "{{ region }}"
           loop: "{{ tag_resources.resources }}"
           loop_control:
