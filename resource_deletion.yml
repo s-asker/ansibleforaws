@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: Import VPC Variables
+      include_vars: vars/vpc_setup.yml
+
+    - name: Find VPCs by Tag
+      amazon.aws.ec2_vpc_net_facts:
+        filters:
+          tag:Project: AnsibleCloudProject
+      register: vpc_facts
+
+    - name: Find all resources with the same tag
+      amazon.aws.ec2_tag_facts:
+        filters:
+          key: Project
+          value: AnsibleCloudProject
+      register: tag_resources
+
+    - name: Delete all resources based on tags
+      block:
+        - name: Check resource type and delete
+          amazon.aws.ec2_{{ item.resource_type }}:
+            state: absent
+            region: "{{ region }}"
+          loop: "{{ tag_resources.resources }}"
+          loop_control:
+            label: "{{ item.resource_type }}: {{ item.id }}"
+      when: tag_resources.resources | length > 0
