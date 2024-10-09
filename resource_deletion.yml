@@ -22,8 +22,10 @@
     - name: Delete all resources based on tags
       block:
         - name: Check resource type and delete
-          amazon.aws.ec2_{{ item.resource_type }}:
-            state: absent
+          ansible.builtin.include_tasks: delete_resources.yml
+          vars:
+            resource_type: "{{ item.resource_type }}"
+            resource_id: "{{ item.id }}"
             region: "{{ region }}"
           loop: "{{ tag_resources.resources }}"
           loop_control:
