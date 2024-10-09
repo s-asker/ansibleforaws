@@ -6,7 +6,6 @@
     - name: Import VPC Variables
       include_vars: vars/vpc_setup.yml
 
-
     - name: Create the Project VPC
       amazon.aws.ec2_vpc_net:
         name: "{{vpc_name}}"
@@ -19,9 +18,6 @@
         tags:
           Project: AnsibleCloudProject
       register: vpcout
-
-    # - debug:
-    #     var: vpcout
 
     - name: Create public subnets in Project VPC
       amazon.aws.ec2_vpc_subnet:
@@ -63,7 +59,6 @@
           Name: VPC_IGW
       register: igw_out
 
-
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
         vpc_id: "{{vpcout.vpc.id}}"
@@ -81,23 +76,31 @@
             gateway_id: "{{ igw_out.gateway_id }}"
       register: publicRT_out
 
-
     - name: Setting Facts
       ansible.builtin.set_fact:
         one_dict:
-          vpcid:     "{{vpcout.vpc.id}}"
+          vpcid: "{{vpcout.vpc.id}}"
           pubsub1id: "{{pubsubout.results[0].subnet.id}}"
           pubsub2id: "{{pubsubout.results[1].subnet.id}}"
           pubsub3id: "{{pubsubout.results[2].subnet.id}}"
-          privsub1id: " {{privsubout.results[0].subnet.id}}"
-          privsub2id: " {{privsubout.results[1].subnet.id}}"
-          privsub3id: " {{privsubout.results[2].subnet.id}}"
-          igwid:      " {{igw_out.gateway_id}}"
-          pubRTid:   " {{publicRT_out.route_table.id}}"
+          privsub1id: "{{privsubout.results[0].subnet.id}}"
+          privsub2id: "{{privsubout.results[1].subnet.id}}"
+          privsub3id: "{{privsubout.results[2].subnet.id}}"
+          igwid: "{{igw_out.gateway_id}}"
+          pubRTid: "{{publicRT_out.route_table.id}}"
           cacheable: true
 
     - name: Saving Variables to a File
       copy:
         dest: vars/vpc-output_vars
-        content: "region: {{region}}\nvpcid: {{ vpcout.vpc.id }}\npubsub1id: {{ pubsubout.results[0].subnet.id }}\npubsub2id: {{ pubsubout.results[1].subnet.id }}\npubsub3id: {{ pubsubout.results[2].subnet.id }}\nprivsub1id: {{ privsubout.results[0].subnet.id }}\nprivsub2id: {{ privsubout.results[1].subnet.id }}\nprivsub3id: {{ privsubout.results[2].subnet.id }}\nigwid: {{ igw_out.gateway_id }}\npubRTid: {{ publicRT_out.route_table.id }}"
-
+        content: |
+          region: {{region}}
+          vpcid: {{ vpcout.vpc.id }}
+          pubsub1id: {{ pubsubout.results[0].subnet.id }}
+          pubsub2id: {{ pubsubout.results[1].subnet.id }}
+          pubsub3id: {{ pubsubout.results[2].subnet.id }}
+          privsub1id: {{ privsubout.results[0].subnet.id }}
+          privsub2id: {{ privsubout.results[1].subnet.id }}
+          privsub3id: {{ privsubout.results[2].subnet.id }}
+          igwid: {{ igw_out.gateway_id }}
+          pubRTid: {{ publicRT_out.route_table.id }}
