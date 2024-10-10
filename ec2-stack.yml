@@ -162,17 +162,6 @@
       retries: 30
       delay: 20
 
-    - name: Wait for web01 instance to pass health checks
-      shell: |
-        aws ec2 describe-instance-status \
-          --instance-ids "{{ web01_out.instances[0].instance_id }}" \
-          --region "{{ region }}" \
-          --query 'InstanceStatuses[0].InstanceStatus.Status' \
-          --output text
-      register: instance_health
-      until: instance_health.stdout == "ok"
-      retries: 30
-      delay: 20
 
 
     - name: Create the Application Load Balancer from the web instances
