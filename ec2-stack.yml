@@ -174,17 +174,6 @@
       retries: 30
       delay: 20
 
-    - name: Create a target group with a default health check
-      community.aws.elb_target_group:
-        name: webtargetgroup
-        region: "{{region}}"
-        protocol: http
-        port: 80
-        vpc_id: "{{vpcid}}"
-        targets:
-          - Id: "{{web01_out.instances[0].instance_id}}"
-            Port: 80
-        state: present
 
     - name: Create the Application Load Balancer from the web instances
       amazon.aws.elb_application_lb:
