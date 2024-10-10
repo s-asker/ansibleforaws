@@ -1,240 +1,254 @@
 ---
-- name: Setup Project Stack
-  hosts: localhost
-  connection: local
-  gather_facts: no
-  tasks:
-    - name: Import VPC Setup Variables
-      include_vars: vars/vpc-output_vars
+  - name: Setup Project Stack
+    hosts: localhost
+    connection: local
+    gather_facts: no
+    tasks:
+      - name: Import VPC Setup Variables
+        include_vars: vars/vpc-output_vars
+  
+      - name: Import Site Setup Variables
+        include_vars: vars/stack_setup.yml
+  
+      - name: Create EC2 keypair for site instances
+        ec2_key:
+          name: sitekey
+          region: "{{region}}"
+        register: sitekey_out
+  
+      - name: Save login key into file
+        copy:
+          content: "{{sitekey_out.key.private_key}}"
+          dest: "./site_loginkey.pem"
+          mode: 0600
+        when: sitekey_out.changed
+  
+      - name: Create security group for Load Balancer
+        amazon.aws.ec2_security_group:
+          name: LB-SG
+          description: Security Group of LB
+          vpc_id: "{{vpcid}}"
+          region: "{{region}}"
+          rules:
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+        register: LBsg_out
+  
+      - name: Create security group for Site Stack
+        amazon.aws.ec2_security_group:
+          name: EC2-SG
+          description: Security group of site instances
+          vpc_id: "{{vpcid}}"
+          region: "{{region}}"
+          purge_rules: no
+          rules:
+            - proto: tcp
+              ports: 22
+              group_id: "{{bastionsgOUT}}"
+  
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              group_id: "{{LBsg_out.group_id}}"
+        register: EC2sg_out
+  
+      - name: Update stack security group for internal traffic
+        amazon.aws.ec2_security_group:
+          name: EC2-SG
+          description: Security group of site instances
+          vpc_id: "{{vpcid}}"
+          region: "{{region}}"
+          purge_rules: no
+          rules:
+            - proto: all
+              group_id: "{{EC2sg_out.group_id}}"
+  
+      - name: Creating Nginx instance (web01)
+        amazon.aws.ec2_instance:
+          name: "web01"
+          region: "{{region}}"
+          key_name: sitekey
+          wait: yes
+          exact_count: 1
+          vpc_subnet_id: "{{pubsub1id}}"
+          instance_type: t2.micro
+          security_group: "{{EC2sg_out.group_id}}"
+          network_interfaces:
+            - assign_public_ip: true
+          image_id: "{{nginx_ami}}"
+          tags:
+            Project: Web
+        register: web01_out
+  
+  
+      - name: Creating Tomcat instance (app01)
+        amazon.aws.ec2_instance:
+          name: "app01"
+          region: "{{region}}"
+          key_name: sitekey
+          wait: yes
+          exact_count: 1
+          vpc_subnet_id: "{{pubsub1id}}"
+          instance_type: t2.micro
+          security_group: "{{EC2sg_out.group_id}}"
+          network_interfaces:
+            - assign_public_ip: true
+          image_id: "{{tomcat_ami}}"
+          tags:
+            Project: Web
+        register: app01_out
+  
+      - name: Creating Memcached instance (mc01)
+        amazon.aws.ec2_instance:
+          name: "mc01"
+          region: "{{region}}"
+          key_name: sitekey
+          wait: yes
+          exact_count: 1
+          vpc_subnet_id: "{{pubsub1id}}"
+          instance_type: t2.micro
+          security_group: "{{EC2sg_out.group_id}}"
+          network_interfaces:
+            - assign_public_ip: true
+          image_id: "{{memcache_ami}}"
+          tags:
+            Project: Web
+        register: mc01_out
+  
+  
+      - name: Creating rabbitMQ instance (rmq01)
+        amazon.aws.ec2_instance:
+          name: "rmq01"
+          region: "{{region}}"
+          key_name: sitekey
+          wait: yes
+          exact_count: 1
+          vpc_subnet_id: "{{pubsub1id}}"
+          instance_type: t2.micro
+          security_group: "{{EC2sg_out.group_id}}"
+          network_interfaces:
+            - assign_public_ip: true
+          image_id: "{{rmq_ami}}"
+          tags:
+            Project: Web
+        register: rmq01_out
+  
+      - name: Creating MYSQL DB instance (db01)
+        amazon.aws.ec2_instance:
+          name: "db01"
+          region: "{{region}}"
+          key_name: sitekey
+          wait: yes
+          exact_count: 1
+          vpc_subnet_id: "{{pubsub1id}}"
+          instance_type: t2.micro
+          security_group: "{{EC2sg_out.group_id}}"
+          network_interfaces:
+            - assign_public_ip: true
+          image_id: "{{mysql_ami}}"
+          tags:
+            Project: Web
+        register: db01_out
+  
+      - debug:
+          var: db01_out
 
-    - name: Import Site Setup Variables
-      include_vars: vars/stack_setup.yml
-
-    - name: Create EC2 keypair for site instances
-      ec2_key:
-        name: sitekey
-        region: "{{region}}"
-      register: sitekey_out
-
-    - name: Save login key into file
-      copy:
-        content: "{{sitekey_out.key.private_key}}"
-        dest: "./site_loginkey.pem"
-        mode: 0600
-      when: sitekey_out.changed
-
-    - name: Create security group for Load Balancer
-      amazon.aws.ec2_security_group:
-        name: LB-SG
-        description: Security Group of LB
-        vpc_id: "{{vpcid}}"
-        region: "{{region}}"
-        rules:
-          - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-      register: LBsg_out
-
-    - name: Create security group for Site Stack
-      amazon.aws.ec2_security_group:
-        name: EC2-SG
-        description: Security group of site instances
-        vpc_id: "{{vpcid}}"
-        region: "{{region}}"
-        purge_rules: no
-        rules:
-          - proto: tcp
-            ports: 22
-            group_id: "{{bastionsgOUT}}"
-
-          - proto: tcp
-            from_port: 80
-            to_port: 80
-            group_id: "{{LBsg_out.group_id}}"
-      register: EC2sg_out
-
-    - name: Update stack security group for internal traffic
-      amazon.aws.ec2_security_group:
-        name: EC2-SG
-        description: Security group of site instances
-        vpc_id: "{{vpcid}}"
-        region: "{{region}}"
-        purge_rules: no
-        rules:
-          - proto: all
-            group_id: "{{EC2sg_out.group_id}}"
-
-    - name: Creating Nginx instance (web01)
-      amazon.aws.ec2_instance:
-        name: "web01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{nginx_ami}}"
-        tags:
-          Project: Web
-      register: web01_out
-
-
-    - name: Creating Tomcat instance (app01)
-      amazon.aws.ec2_instance:
-        name: "app01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{tomcat_ami}}"
-        tags:
-          Project: Web
-      register: app01_out
-
-    - name: Creating Memcached instance (mc01)
-      amazon.aws.ec2_instance:
-        name: "mc01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{memcache_ami}}"
-        tags:
-          Project: Web
-      register: mc01_out
-
-
-    - name: Creating rabbitMQ instance (rmq01)
-      amazon.aws.ec2_instance:
-        name: "rmq01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{rmq_ami}}"
-        tags:
-          Project: Web
-      register: rmq01_out
-
-    - name: Creating MYSQL DB instance (db01)
-      amazon.aws.ec2_instance:
-        name: "db01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{mysql_ami}}"
-        tags:
-          Project: Web
-      register: db01_out
-
-    - name: Wait for web01 instance to be in running state
-      amazon.aws.ec2_instance_info:
-        region: "{{ region }}"
-        instance_ids:
-          - "{{ web01_out.instances[0].instance_id }}"
-      register: instance_info
-      until: instance_info.instances[0].state.name == 'running'
-      retries: 30
-      delay: 20
-
-
-
-    - name: Create the Application Load Balancer from the web instances
-      amazon.aws.elb_application_lb:
-        name: ALB
-        region: "{{region}}"
-        security_groups:
-          - "{{ LBsg_out.group_id }}"
-        subnets:
-          - "{{pubsub1id}}"
-          - "{{pubsub2id}}"
-          - "{{pubsub3id}}"
-        listeners:
-          - Protocol: HTTP # Required. The protocol for connections from clients to the load balancer (HTTP or HTTPS) (case-sensitive).
-            Port: 80 # Required. The port on which the load balancer is listening.
-            # The security policy that defines which ciphers and protocols are supported. The default is the current predefined security policy.
-            DefaultActions:
-              - Type: forward # Required.
-                TargetGroupName: webtargetgroup
-        state: present
-
-    - name: Insert Private IPs of Web Machines to a file
-      blockinfile:
-        path: "provisioning/group_vars/hostsip"
-        block: |
-          web01: {{web01_out.instances[0].network_interfaces[0].private_ip_address}}
-          app01: {{app01_out.instances[0].network_interfaces[0].private_ip_address}}
-          db01: {{db01_out.instances[0].network_interfaces[0].private_ip_address}}
-          rmq01: {{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
-          mc01: {{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
-
-    - name: Copy login key to provisioning directory
-      copy:
-        src: "./site_loginkey.pem"
-        dest: "provisioning/site_loginkey.pem"
-        mode: 0400
-
-    - name: Create Dynamic Inventory
-      blockinfile:
-        path: "provisioning/inventory"
-        block: |
-          web01 ansible_host={{web01_out.instances[0].network_interfaces[0].private_ip_address}}
-          app01 ansible_host={{app01_out.instances[0].network_interfaces[0].private_ip_address}}
-          rmq01 ansible_host={{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
-          mc01 ansible_host={{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
-          db01 ansible_host={{db01_out.instances[0].network_interfaces[0].private_ip_address}}
-          cntl ansible_host=127.0.0.1 ansible_connection=local
-          [websrvgrp]
-          web01
-          
-          [appsrvgrp]
-          app01
-          
-          [rmqsrvgrp]
-          rmq01
-          
-          [mcsrvgrp]
-          mc01
-          
-          [dbsrvgrp]
-          db01
-          
-          [control]
-          cntl
-          
-          [stack_inst:children]
-          websrvgrp
-          appsrvgrp
-          rmqsrvgrp
-          mcsrvgrp
-          dbsrvgrp
-          [stack_inst:vars]
-          ansible_user=ubuntu
-          ansible_ssh_private_key_file=site_loginkey.pem
-
-
+      - name: Wait for web01 instance to be in running state
+        amazon.aws.ec2_instance_info:
+          region: "{{ region }}"
+          instance_ids:
+            - "{{ web01_out.instances[0].instance_id }}"
+        register: instance_info
+        until: instance_info.instances[0].state.name == 'running'
+        retries: 60  # Increase the number of retries
+        delay: 10    # Decrease the delay between retries
+  
+      - name: Create a target group with a default health check
+        community.aws.elb_target_group:
+          name: webtargetgroup
+          region: "{{region}}"
+          protocol: http
+          port: 80
+          vpc_id: "{{vpcid}}"
+          targets:
+            - Id: "{{web01_out.instances[0].instance_id}}"
+              Port: 80
+          state: present
+  
+      - name: Create the Application Load Balancer from the web instances
+        amazon.aws.elb_application_lb:
+          name: ALB
+          region: "{{region}}"
+          security_groups:
+            - "{{ LBsg_out.group_id }}"
+          subnets:
+            - "{{pubsub1id}}"
+            - "{{pubsub2id}}"
+            - "{{pubsub3id}}"
+          listeners:
+            - Protocol: HTTP # Required. The protocol for connections from clients to the load balancer (HTTP or HTTPS) (case-sensitive).
+              Port: 80 # Required. The port on which the load balancer is listening.
+              # The security policy that defines which ciphers and protocols are supported. The default is the current predefined security policy.
+              DefaultActions:
+                - Type: forward # Required.
+                  TargetGroupName: webtargetgroup
+          state: present
+  
+      - name: Insert Private IPs of Web Machines to a file
+        blockinfile:
+          path: "provisioning/group_vars/hostsip"
+          block: |
+            web01: {{web01_out.instances[0].network_interfaces[0].private_ip_address}}
+            app01: {{app01_out.instances[0].network_interfaces[0].private_ip_address}}
+            db01: {{db01_out.instances[0].network_interfaces[0].private_ip_address}}
+            rmq01: {{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
+            mc01: {{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
+  
+      - name: Copy login key to provisioning directory
+        copy:
+          src: "./site_loginkey.pem"
+          dest: "provisioning/site_loginkey.pem"
+          mode: 0400
+  
+      - name: Create Dynamic Inventory
+        blockinfile:
+          path: "provisioning/inventory"
+          block: |
+            web01 ansible_host={{web01_out.instances[0].network_interfaces[0].private_ip_address}}
+            app01 ansible_host={{app01_out.instances[0].network_interfaces[0].private_ip_address}}
+            rmq01 ansible_host={{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
+            mc01 ansible_host={{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
+            db01 ansible_host={{db01_out.instances[0].network_interfaces[0].private_ip_address}}
+            cntl ansible_host=127.0.0.1 ansible_connection=local
+            [websrvgrp]
+            web01
+            
+            [appsrvgrp]
+            app01
+            
+            [rmqsrvgrp]
+            rmq01
+            
+            [mcsrvgrp]
+            mc01
+            
+            [dbsrvgrp]
+            db01
+            
+            [control]
+            cntl
+            
+            [stack_inst:children]
+            websrvgrp
+            appsrvgrp
+            rmqsrvgrp
+            mcsrvgrp
+            dbsrvgrp
+            [stack_inst:vars]
+            ansible_user=ubuntu
+            ansible_ssh_private_key_file=site_loginkey.pem
+  
+  
+  
