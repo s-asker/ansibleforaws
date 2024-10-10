@@ -152,8 +152,13 @@
           Project: Web
       register: db01_out
 
-    - debug:
-        var: db01_out
+    - name: Wait for web01 instance to become reachable
+      wait_for:
+        host: "{{ web01_out.instances[0].public_ip_address }}"
+        port: 22
+        delay: 10
+        timeout: 300
+      when: web01_out.changed
 
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
