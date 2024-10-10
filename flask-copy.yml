@@ -1,0 +1,30 @@
+---
+- name: Copy Python file to web01 instance
+  hosts: web01
+  become: yes
+  tasks:
+    - name: Ensure target directory exists
+      file:
+        path: /home/ubuntu/flaskapp
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: 0755
+
+    - name: Copy Python file to web01
+      copy:
+        src: app.py
+        dest: /home/ubuntu/flaskapp/app.py
+        owner: ubuntu
+        group: ubuntu
+        mode: 0644
+
+    - name: Verify the file was copied
+      stat:
+        path: /home/ubuntu/flaskapp/app.py
+      register: python_file_status
+
+    - name: Debug output
+      debug:
+        var: python_file_status
+
