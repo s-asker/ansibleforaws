@@ -152,13 +152,27 @@
           Project: Web
       register: db01_out
 
-    - name: Wait for web01 instance to become reachable
-      wait_for:
-        host: "{{ web01_out.instances[0].public_ip_address }}"
-        port: 22
-        delay: 10
-        timeout: 300
-      when: web01_out.changed
+    - name: Wait for web01 instance to be in running state
+      amazon.aws.ec2_instance_info:
+        region: "{{ region }}"
+        instance_ids:
+          - "{{ web01_out.instances[0].instance_id }}"
+      register: instance_info
+      until: instance_info.instances[0].state.name == 'running'
+      retries: 30
+      delay: 20
+
+    - name: Wait for web01 instance to pass health checks
+      shell: |
+        aws ec2 describe-instance-status \
+          --instance-ids "{{ web01_out.instances[0].instance_id }}" \
+          --region "{{ region }}" \
+          --query 'InstanceStatuses[0].InstanceStatus.Status' \
+          --output text
+      register: instance_health
+      until: instance_health.stdout == "ok"
+      retries: 30
+      delay: 20
 
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
