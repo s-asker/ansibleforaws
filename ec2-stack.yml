@@ -65,33 +65,21 @@
           - proto: all
             group_id: "{{EC2sg_out.group_id}}"
 
-    - name: Run shell script to get instance ID
-      command:
-        ./get_instance_id.sh
+    - name: Run shell script to get instance ID and VPC info
+      command: ./get_instance_id.sh
       register: ansible_vpc_id_output
 
-    - debug: print
+    - name: Debug output from the shell script
+      ansible.builtin.debug:
         var: ansible_vpc_id_output.stdout
 
-    - name: Set the Ansible VPC ID Fact
+    - name: Extract the VPC ID from the output
       ansible.builtin.set_fact:
-        ansiblevpcid: "{{ ansible_vpc_info_output.stdout | from_json | json_query('VpcId') }}"
-        ansiblevpcCidr: "{{ ansible_vpc_info_output.stdout | from_json | json_query('CidrBlock') }}"
+        ansiblevpcid: "{{ ansible_vpc_id_output.stdout.split(': ')[1] }}"
 
-    - name: Debug Ansible VPC ID and CIDR
+    - name: Debug Ansible VPC ID
       ansible.builtin.debug:
-        msg: 
-          - "Ansible VPC ID: {{ ansiblevpcid }}"
-          - "Ansible VPC CIDR: {{ ansiblevpcCidr }}"
-
-    - name: Create VPC Peering Connection
-      community.aws.ec2_vpc_peer:
-        name: AnsibleToProjectPeering
-        vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
-        peer_vpc_id: "{{ vpcid }}"  # New VPC from earlier playbook
-        peer_region: "{{ region }}"
-        auto_accept: true
-      register: vpc_peering
+        msg: "Ansible VPC ID: {{ ansiblevpcid }}"
 
     - name: Create a new route table for Ansible VPC
       amazon.aws.ec2_vpc_route_table:
