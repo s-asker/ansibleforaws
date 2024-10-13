@@ -68,19 +68,13 @@
     - name: Run shell script to get instance ID
       command:
         ./get_instance_id.sh
-      register: instance_id_output
-
-
-    - name: Fetch the VPC ID of the instance
-      community.aws.ec2_vpc_net_facts:
-        instance_ids: "{{ instance_id_output.stdout }}"
-      register: vpc_info
+      register: ansible_vpc_id_output
 
 
     - name: Set the Ansible VPC ID Fact
       ansible.builtin.set_fact:
-        ansiblevpcid: "{{ vpc_info.instances[0].vpc_id }}"
-        ansiblevpcCidr: "{{ vpc_info.instances[0].network_interfaces[0].subnet.cidr_block }}"
+        ansiblevpcid: "{{ ansible_vpc_info_output.stdout | from_json | json_query('VpcId') }}"
+        ansiblevpcCidr: "{{ ansible_vpc_info_output.stdout | from_json | json_query('CidrBlock') }}"
 
     - name: Debug Ansible VPC ID and CIDR
       ansible.builtin.debug:
