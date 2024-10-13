@@ -69,7 +69,12 @@
       command:
         ./get_instance_id.sh
       register: instance_id_output
-    
+
+
+    - name: Fetch the VPC ID of the instance
+      ec2_vpc_net_facts:
+        instance_ids: "{{ instance_id_output.stdout }}"
+      register: vpc_info
 
     - name: Fetch the VPC ID of Ansible Control Machine
       amazon.aws.ec2_instance_info:
