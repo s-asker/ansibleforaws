@@ -75,7 +75,7 @@
 
     - name: Extract the VPC ID from the output
       ansible.builtin.set_fact:
-        ansiblevpcid: "{{ ansible_vpc_id_output.stdout.split(': ')[1] }}"
+        ansiblevpcid: "{{ ansible_vpc_id_output.stdout.strip() }}"
 
     - name: Debug Ansible VPC ID
       ansible.builtin.debug:
@@ -88,8 +88,10 @@
         tags:
           Name: AnsibleVPC_RT
       register: ansibleRT
+
     - debug:
         var: ansibleRT
+
     - name: Create VPC Peering Connection
       community.aws.ec2_vpc_peer:
         vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
@@ -99,27 +101,25 @@
 
     - name: Accept local VPC peering request
       community.aws.ec2_vpc_peer:
-        region: "{{region}}"
+        region: "{{ region }}"
         peering_id: "{{ vpc_peering.peering_id }}"
         state: accept
       register: action_peer
 
-
     - name: Add route to the newly created Ansible VPC route table
       amazon.aws.ec2_vpc_route_table:
-        route_table_id: "{{ ansibleRT.id  }}"  # Use the newly created route table ID
+        route_table_id: "{{ ansibleRT.id }}"
         dest: "{{ vpcCidr }}"  # CIDR of the new VPC
         vpc_peering_id: "{{ vpc_peering.peering.id }}"
         state: present
-
 
     - name: Add route to the deployed VPC route table
       amazon.aws.ec2_vpc_route_table:
         route_table_id: "{{ pubRTid }}"  # ID of the route table in the deployed VPC
         region: "{{ region }}"
         routes:
-        - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
-          vpc_peering_id: "{{ vpc_peering.peering.id }}"
+          - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
+            vpc_peering_id: "{{ vpc_peering.peering.id }}"
 
     - name: Update Bastion Security Group to Allow Traffic Between VPCs
       amazon.aws.ec2_security_group:
@@ -128,6 +128,7 @@
         rules:
           - proto: all
             cidr_ip: "{{ ansiblevpcCidr }}"
+
 
     - name: Update web01 Security Group to Allow Traffic Between VPCs
       amazon.aws.ec2_security_group:
@@ -153,7 +154,7 @@
         tags:
           Project: Web
       register: web01_out
-      
+
     - name: Wait for web01 instance to be in running state
       amazon.aws.ec2_instance_info:
         region: "{{ region }}"
@@ -163,7 +164,7 @@
       until: instance_info.instances[0].state.name == 'running'
       retries: 60  # Increase the number of retries
       delay: 10    # Decrease the delay between retries
-        
+
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
         name: webtargetgroup
