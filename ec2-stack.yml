@@ -87,9 +87,9 @@
         region: "{{ region }}"
         tags:
           Name: AnsibleVPC_RT
-      register: ansible_route_table
+      register: ansibleRT
     - debug:
-        var: ansible_route_table.id
+        var: ansibleRT
     - name: Create VPC Peering Connection
       community.aws.ec2_vpc_peer:
         vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
@@ -107,7 +107,7 @@
 
     - name: Add route to the newly created Ansible VPC route table
       amazon.aws.ec2_vpc_route_table:
-        route_table_id: "{{ ansible_route_table.id  }}"  # Use the newly created route table ID
+        route_table_id: "{{ ansibleRT.id  }}"  # Use the newly created route table ID
         dest: "{{ vpcCidr }}"  # CIDR of the new VPC
         vpc_peering_id: "{{ vpc_peering.peering.id }}"
         state: present
