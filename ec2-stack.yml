@@ -71,7 +71,7 @@
       register: ansible_vpc_id_output
 
     - debug: print
-      var: ansible_vpc_id_output
+        var: ansible_vpc_id_output
 
     - name: Set the Ansible VPC ID Fact
       ansible.builtin.set_fact:
