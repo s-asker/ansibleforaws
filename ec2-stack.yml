@@ -108,7 +108,7 @@
 
     - name: Add route to the newly created Ansible VPC route table
       amazon.aws.ec2_vpc_route_table:
-        route_table_id: "{{ ansibleRT.id }}"
+        route_table_id: "{{ ansibleRT.route_table.id }}"
         dest: "{{ vpcCidr }}"  # CIDR of the new VPC
         vpc_peering_id: "{{ vpc_peering.peering.id }}"
         state: present
