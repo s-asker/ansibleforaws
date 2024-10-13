@@ -91,7 +91,6 @@
 
     - name: Create VPC Peering Connection
       community.aws.ec2_vpc_peer:
-        name: AnsibleToProjectPeering
         vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
         peer_vpc_id: "{{ vpcid }}"  # New VPC from earlier playbook
         region: "{{ region }}"
