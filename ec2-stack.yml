@@ -81,6 +81,16 @@
       ansible.builtin.debug:
         msg: "Ansible VPC ID: {{ ansiblevpcid }}"
 
+    - name: Get VPC CIDR Block
+      amazon.aws.ec2_vpc_info:
+        vpc_ids: "{{ ansiblevpcid }}"
+        region: "{{ region }}"
+      register: vpc_info
+
+    - name: Extract VPC CIDR Block
+      ansible.builtin.set_fact:
+        ansiblevpcCidr: "{{ vpc_info.vpcs[0].cidr_block }}"
+
     - name: Create a new route table for Ansible VPC
       amazon.aws.ec2_vpc_route_table:
         vpc_id: "{{ ansiblevpcid }}"
