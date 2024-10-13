@@ -65,22 +65,16 @@
           - proto: all
             group_id: "{{EC2sg_out.group_id}}"
 
-    - name: Get metadata token
-        command:
-          curl -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 300" http://169.254.169.254/latest/api/token
-        register: token_response
-
-    - name: Fetch metadata
-      command:
-        curl http://169.254.169.254/latest/meta-data -H "X-aws-ec2-metadata-token: { { token_response } }
-      register: metadata_response
+    - name: Run shell script to get instance ID
+        command: ./get_instance_id.sh
+        register: instance_id_output
     
 
     - name: Fetch the VPC ID of Ansible Control Machine
       amazon.aws.ec2_instance_info:
         region: "{{ region }}"
         instance_ids:
-          - "{{ instance_id.stdout }}"
+          - "{{ instance_id_output }}"
       register: instance_info
 
     - name: Set the Ansible VPC ID Fact
