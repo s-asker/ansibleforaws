@@ -49,6 +49,7 @@
         image_id: "{{bastion_ami}}"
         tags:
           Name: Bastion
+    
 
     - name: Add a new variable to the vars/vpc-output_vars file
       blockinfile:

@@ -65,6 +65,67 @@
           - proto: all
             group_id: "{{EC2sg_out.group_id}}"
 
+    - name: Get the Instance ID of Ansible Control Machine
+      ansible.builtin.command: "curl http://169.254.169.254/latest/meta-data/instance-id"
+      register: instance_id
+      changed_when: false
+
+    - name: Fetch the VPC ID of Ansible Control Machine
+      amazon.aws.ec2_instance_info:
+        region: "{{ region }}"
+        instance_ids:
+          - "{{ instance_id.stdout }}"
+      register: instance_info
+
+    - name: Set the Ansible VPC ID Fact
+      ansible.builtin.set_fact:
+        ansible_vpc_id: "{{ instance_info.instances[0].vpc_id }}"
+        ansible_vpc_cidr: "{{ instance_info.instances[0].network_interfaces[0].subnet.cidr_block }}"
+
+    - name: Debug Ansible VPC ID and CIDR
+      ansible.builtin.debug:
+        msg: 
+          - "Ansible VPC ID: {{ ansiblevpcid }}"
+          - "Ansible VPC CIDR: {{ ansiblevpccidr }}"
+
+    - name: Create VPC Peering Connection
+      amazon.aws.ec2_vpc_peering:
+        name: AnsibleToProjectPeering
+        vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
+        peer_vpc_id: "{{ vpcid }}"  # New VPC from earlier playbook
+        peer_region: "{{ region }}"
+        auto_accept: true
+      register: vpc_peering
+
+    - name: Add Route to Ansible VPC Route Table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{ ansiblevpcid }}"
+        region: "{{ region }}"
+        tags:
+          Name: AnsibleVPC_RT
+        routes:
+          - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
+            vpc_peering: "{{ vpc_peering.peering.id }}"
+
+    - name: Add Route to New VPC Route Table
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{ vpcid }}"
+        region: "{{ region }}"
+        tags:
+          Name: ProjectVPC_RT
+        routes:
+          - dest: "{{ ansible_vpc_cidr }}"  # CIDR of the Ansible VPC
+            vpc_peering: "{{ vpc_peering.peering.id }}"
+
+    - name: Update Security Groups to Allow Traffic Between VPCs
+      amazon.aws.ec2_security_group:
+        group_id: "{{ bastionsgOUT }}"  # Security group for the bastion host
+        region: "{{ region }}"
+        rules:
+          - proto: all
+            cidr_ip: "{{ ansible_vpc_cidr }}"
+      when: bastionsgOUT is defined
+
     - name: Creating Nginx instance (web01)
       amazon.aws.ec2_instance:
         name: "web01"
@@ -81,80 +142,7 @@
         tags:
           Project: Web
       register: web01_out
-
-
-    - name: Creating Tomcat instance (app01)
-      amazon.aws.ec2_instance:
-        name: "app01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{tomcat_ami}}"
-        tags:
-          Project: Web
-      register: app01_out
-
-    - name: Creating Memcached instance (mc01)
-      amazon.aws.ec2_instance:
-        name: "mc01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{memcache_ami}}"
-        tags:
-          Project: Web
-      register: mc01_out
-
-
-    - name: Creating rabbitMQ instance (rmq01)
-      amazon.aws.ec2_instance:
-        name: "rmq01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{rmq_ami}}"
-        tags:
-          Project: Web
-      register: rmq01_out
-
-    - name: Creating MYSQL DB instance (db01)
-      amazon.aws.ec2_instance:
-        name: "db01"
-        region: "{{region}}"
-        key_name: sitekey
-        wait: yes
-        exact_count: 1
-        vpc_subnet_id: "{{pubsub1id}}"
-        instance_type: t2.micro
-        security_group: "{{EC2sg_out.group_id}}"
-        network_interfaces:
-          - assign_public_ip: true
-        image_id: "{{mysql_ami}}"
-        tags:
-          Project: Web
-      register: db01_out
-
-    - debug:
-        var: db01_out
-
+      
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
         name: webtargetgroup
