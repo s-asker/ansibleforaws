@@ -73,17 +73,13 @@
       ansible.builtin.debug:
         var: ansible_vpc_id_output.stdout
 
-    - name: Extract the VPC ID from the output
-      ansible.builtin.set_fact:
-        ansiblevpcid: "{{ ansible_vpc_id_output.stdout.split(': ')[1] }}"
-
     - name: Debug Ansible VPC ID
       ansible.builtin.debug:
-        msg: "Ansible VPC ID: {{ ansiblevpcid }}"
+        msg: "Ansible VPC ID: {{ ansible_vpc_id_output }}"
 
     - name: Create a new route table for Ansible VPC
       amazon.aws.ec2_vpc_route_table:
-        vpc_id: "{{ ansiblevpcid }}"
+        vpc_id: "{{ ansible_vpc_id_output }}"
         region: "{{ region }}"
         tags:
           Name: AnsibleVPC_RT
@@ -92,7 +88,7 @@
         var: ansibleRT
     - name: Create VPC Peering Connection
       community.aws.ec2_vpc_peer:
-        vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
+        vpc_id: "{{ ansible_vpc_id_output }}"  # VPC of the Ansible control machine
         peer_vpc_id: "{{ vpcid }}"  # New VPC from earlier playbook
         region: "{{ region }}"
       register: vpc_peering
