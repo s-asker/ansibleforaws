@@ -79,14 +79,14 @@
 
     - name: Set the Ansible VPC ID Fact
       ansible.builtin.set_fact:
-        ansible_vpc_id: "{{ instance_info.instances[0].vpc_id }}"
-        ansible_vpc_cidr: "{{ instance_info.instances[0].network_interfaces[0].subnet.cidr_block }}"
+        ansiblevpcid: "{{ instance_info.instances[0].vpc_id }}"
+        ansiblevpcCidr: "{{ instance_info.instances[0].network_interfaces[0].subnet.cidr_block }}"
 
     - name: Debug Ansible VPC ID and CIDR
       ansible.builtin.debug:
         msg: 
           - "Ansible VPC ID: {{ ansiblevpcid }}"
-          - "Ansible VPC CIDR: {{ ansiblevpccidr }}"
+          - "Ansible VPC CIDR: {{ ansiblevpcCidr }}"
 
     - name: Create VPC Peering Connection
       amazon.aws.ec2_vpc_peering:
@@ -107,24 +107,30 @@
           - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
             vpc_peering: "{{ vpc_peering.peering.id }}"
 
-    - name: Add Route to New VPC Route Table
+    - name: Add route to the deployed VPC route table
       amazon.aws.ec2_vpc_route_table:
-        vpc_id: "{{ vpcid }}"
+        route_table_id: "{{ pubRTid }}"  # ID of the route table in the deployed VPC
         region: "{{ region }}"
-        tags:
-          Name: ProjectVPC_RT
         routes:
-          - dest: "{{ ansible_vpc_cidr }}"  # CIDR of the Ansible VPC
-            vpc_peering: "{{ vpc_peering.peering.id }}"
+        - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
+          vpc_peering_id: "{{ vpc_peering.peering.id }}"
+      state: present
 
-    - name: Update Security Groups to Allow Traffic Between VPCs
+    - name: Update Bastion Security Group to Allow Traffic Between VPCs
       amazon.aws.ec2_security_group:
         group_id: "{{ bastionsgOUT }}"  # Security group for the bastion host
         region: "{{ region }}"
         rules:
           - proto: all
-            cidr_ip: "{{ ansible_vpc_cidr }}"
-      when: bastionsgOUT is defined
+            cidr_ip: "{{ ansiblevpcCidr }}"
+
+    - name: Update web01 Security Group to Allow Traffic Between VPCs
+      amazon.aws.ec2_security_group:
+        group_id:  "{{EC2sg_out.group_id}}"  # Security group for the bastion host
+        region: "{{ region }}"
+        rules:
+          - proto: all
+            cidr_ip: "{{ ansiblevpcCidr }}"
 
     - name: Creating Nginx instance (web01)
       amazon.aws.ec2_instance:
@@ -143,6 +149,16 @@
           Project: Web
       register: web01_out
       
+    - name: Wait for web01 instance to be in running state
+      amazon.aws.ec2_instance_info:
+        region: "{{ region }}"
+        instance_ids:
+          - "{{ web01_out.instances[0].instance_id }}"
+      register: instance_info
+      until: instance_info.instances[0].state.name == 'running'
+      retries: 60  # Increase the number of retries
+      delay: 10    # Decrease the delay between retries
+        
     - name: Create a target group with a default health check
       community.aws.elb_target_group:
         name: webtargetgroup
@@ -179,10 +195,6 @@
         path: "provisioning/group_vars/hostsip"
         block: |
           web01: {{web01_out.instances[0].network_interfaces[0].private_ip_address}}
-          app01: {{app01_out.instances[0].network_interfaces[0].private_ip_address}}
-          db01: {{db01_out.instances[0].network_interfaces[0].private_ip_address}}
-          rmq01: {{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
-          mc01: {{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
 
     - name: Copy login key to provisioning directory
       copy:
@@ -195,35 +207,16 @@
         path: "provisioning/inventory"
         block: |
           web01 ansible_host={{web01_out.instances[0].network_interfaces[0].private_ip_address}}
-          app01 ansible_host={{app01_out.instances[0].network_interfaces[0].private_ip_address}}
-          rmq01 ansible_host={{rmq01_out.instances[0].network_interfaces[0].private_ip_address}}
-          mc01 ansible_host={{mc01_out.instances[0].network_interfaces[0].private_ip_address}}
-          db01 ansible_host={{db01_out.instances[0].network_interfaces[0].private_ip_address}}
           cntl ansible_host=127.0.0.1 ansible_connection=local
           [websrvgrp]
           web01
-          
-          [appsrvgrp]
-          app01
-          
-          [rmqsrvgrp]
-          rmq01
-          
-          [mcsrvgrp]
-          mc01
-          
-          [dbsrvgrp]
-          db01
           
           [control]
           cntl
           
           [stack_inst:children]
           websrvgrp
-          appsrvgrp
-          rmqsrvgrp
-          mcsrvgrp
-          dbsrvgrp
+
           [stack_inst:vars]
           ansible_user=ubuntu
           ansible_ssh_private_key_file=site_loginkey.pem
