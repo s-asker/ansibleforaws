@@ -66,9 +66,9 @@
             group_id: "{{EC2sg_out.group_id}}"
 
     - name: Run shell script to get instance ID
-        command:
-          ./get_instance_id.sh
-        register: instance_id_output
+      command:
+        ./get_instance_id.sh
+      register: instance_id_output
     
 
     - name: Fetch the VPC ID of Ansible Control Machine
