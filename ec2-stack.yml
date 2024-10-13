@@ -110,6 +110,7 @@
       amazon.aws.ec2_vpc_route_table:
         route_table_id: "{{ ansibleRT.route_table.id }}"
         vpc_id: "{{ansiblevpcid}}"
+        region: "{{region}"
         routes:
           - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
