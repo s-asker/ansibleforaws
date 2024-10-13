@@ -13,4 +13,4 @@ REGION=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zon
 VPC_ID=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --region $REGION --query "Reservations[0].Instances[0].VpcId" --output text)
 
 # Output the VPC ID
-echo "VPC ID: $VPC_ID"
+echo "$VPC_ID"
