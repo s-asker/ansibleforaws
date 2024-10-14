@@ -104,8 +104,8 @@
         max_size: 5
         desired_capacity: 3
         launch_template:
-          id: "{{ launch_template.launch_template_id }}"
-          version: "{{ launch_template.latest_version_number }}"
+          launch_template_id: "{{ launch_template.launch_template_id }}"
+          version: "{{ launch_template.latest_version }}"
         vpc_zone_identifier:
           - "{{ pubsub1id }}"
           - "{{ pubsub2id }}"
