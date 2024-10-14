@@ -123,6 +123,9 @@
         wait_for_instances: true
       register: asg_out
 
+    - debug:
+        var: asg_out
+
     - name: Create Scaling Policy for CPU Utilization
       community.aws.autoscaling_policy:
         name: cpu_policy
