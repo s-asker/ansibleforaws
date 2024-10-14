@@ -156,7 +156,7 @@
       blockinfile:
         path: "provisioning/group_vars/hostsip"
         block: |
-          {% for instance in web_asg.instances %}
+          {% for instance in asg_out.instances %}
           web{{ loop.index }}: {{ instance.private_ip_address }}
           {% endfor %}
 
@@ -170,13 +170,13 @@
       blockinfile:
         path: "provisioning/inventory"
         block: |
-          {% for instance in web_asg.instances %}
+          {% for instance in asg_out.instances %}
           web{{ loop.index }} ansible_host={{ instance.private_ip_address }}
           {% endfor %}
           cntl ansible_host=127.0.0.1 ansible_connection=local
 
           [websrvgrp]
-          {% for instance in web_asg.instances %}
+          {% for instance in asg_out.instances %}
           web{{ loop.index }}
           {% endfor %}
 
