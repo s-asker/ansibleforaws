@@ -77,8 +77,7 @@
         state: present
       register: webtargetgroup
 
-    - debug:
-        name: Print target group register
+    - debug: Print target group register
         var: webtargetgroup
 
 
