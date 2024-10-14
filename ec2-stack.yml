@@ -118,7 +118,7 @@
         target_group_arns:
           - "{{ webtargetgroup.target_group_arn }}"  # ARN from target group
         health_check_type: ELB
-        health_check_grace_period: 300
+        health_check_period: 300
 
     - name: Create Scaling Policy for CPU Utilization
       community.aws.autoscaling_policy:
