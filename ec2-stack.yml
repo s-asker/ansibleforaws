@@ -58,9 +58,12 @@
         region: "{{ region }}"
         key_name: sitekey
         instance_type: t2.micro
-        security_groups:
-          - "{{ EC2sg_out.group_id }}"
         image_id: "{{ nginx_ami }}"
+        network_interfaces:
+          - device_index: 0
+            associate_public_ip_address: true
+            groups:
+              - - "{{ EC2sg_out.group_id }}"
       register: launch_template
 
 
