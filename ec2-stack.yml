@@ -153,10 +153,10 @@
           target_value: 75.0
 
     - name: Get instances in target group
-        community.aws.elb_target_health:
-          target_group_arn: "{{ webtargetgroup.target_group_arn }}"
-          region: "{{ region }}"
-        register: target_group_health
+      community.aws.elb_target_health:
+        target_group_arn: "{{ webtargetgroup.target_group_arn }}"
+        region: "{{ region }}"
+      register: target_group_health
 
 
     - name: Insert Private IPs of ASG Instances to a File
