@@ -158,14 +158,20 @@
             resource_label: "app/{{ alb_out.load_balancer_arn.split('/')[-2] }}/{{ alb_out.load_balancer_arn.split('/')[-1] }}/targetgroup/{{ webtargetgroup.target_group_name }}/{{ webtargetgroup.target_group_arn.split('/')[-1] }}"
           target_value: 75.0
 
-
+    - name: Gather information about ASG instances
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ item }}"
+        region: "{{ region }}"
+      loop: "{{ asg_out.instances }}"
+      register: ec2_info
 
     - name: Insert Private IPs of ASG Instances to a File
       blockinfile:
         path: "provisioning/group_vars/hostsip"
         block: |
-          {% for target in target_group_health.target_health_descriptions %}
-          web{{ loop.index }}: {{ target['Target']['PrivateIpAddress'] }}
+          {% for result in ec2_info.results %}
+          web{{ loop.index }}: {{ result.instances[0].private_ip_address }}
           {% endfor %}
 
     - name: Create Dynamic Inventory
