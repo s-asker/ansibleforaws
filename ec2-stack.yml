@@ -149,7 +149,7 @@
         target_tracking_config:
           predefined_metric_spec:
             predefined_metric_type: ALBRequestCountPerTarget
-            resource_label: "{{ alb_out.load_balancer_arn.split('/')[-1] }}/{{ webtargetgroup.target_group_name }}"
+            resource_label: "app/{{ alb_out.load_balancer_arn.split('/')[-2] }}/{{ alb_out.load_balancer_arn.split('/')[-1] }}/targetgroup/{{ webtargetgroup.target_group_name }}/{{ webtargetgroup.target_group_arn.split('/')[-1] }}"
           target_value: 75.0
 
     - name: Insert Private IPs of ASG Instances to a File
