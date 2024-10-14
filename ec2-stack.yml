@@ -114,9 +114,11 @@
           - "{{ pubsub2id }}"
           - "{{ pubsub3id }}"
         target_group_arns:
-          - "{{ webtargetgroup.target_group_arn }}"  # ARN from target group
-        health_check_type: ELB
+          - "{{ webtargetgroup.target_group_arn }}"
+        health_check_type: EC2  # Faster EC2 health checks
         health_check_period: 300
+        wait_for_capacity: false  # Don't wait for all instances to be ready
+        wait_for_capacity_timeout: 60 # Optional: Set a smaller timeout
 
     - name: Create Scaling Policy for CPU Utilization
       community.aws.autoscaling_policy:
@@ -125,6 +127,7 @@
         region: "{{ region }}"
         adjustment_type: ChangeInCapacity
         cooldown: 300
+        state: present
         scaling_adjustment: 1
         metric_aggregation_type: Average
         policy_type: TargetTrackingScaling
@@ -140,6 +143,7 @@
         region: "{{ region }}"
         adjustment_type: ChangeInCapacity
         cooldown: 300
+        state: present
         scaling_adjustment: 1
         policy_type: TargetTrackingScaling
         target_tracking_configuration:
