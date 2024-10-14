@@ -74,6 +74,7 @@
         protocol: http
         port: 80
         vpc_id: "{{ vpcid }}"
+        state: present
       register: webtargetgroup
 
 
