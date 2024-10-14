@@ -137,6 +137,7 @@
 
     - name: Update Bastion Security Group to Allow Traffic Between VPCs
       amazon.aws.ec2_security_group:
+        name: bastion-sg
         group_id: "{{ bastionsgOUT }}"  # Security group for the bastion host
         region: "{{ region }}"
         rules:
@@ -146,6 +147,7 @@
 
     - name: Update web01 Security Group to Allow Traffic Between VPCs
       amazon.aws.ec2_security_group:
+        name: EC2-SG
         group_id:  "{{EC2sg_out.group_id}}"  # Security group for the bastion host
         region: "{{ region }}"
         rules:
