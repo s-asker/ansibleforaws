@@ -117,6 +117,7 @@
           - "{{ webtargetgroup.target_group_arn }}"
         health_check_type: EC2  # Faster EC2 health checks
         health_check_period: 60
+        wait_for_instances: false
 
     - name: Create Scaling Policy for CPU Utilization
       community.aws.autoscaling_policy:
