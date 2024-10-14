@@ -97,7 +97,7 @@
       register: alb_out
 
     - debug:
-        var: launch_template
+        var: alb_out
 
     - name: Create Auto Scaling Group
       community.aws.ec2_asg:
