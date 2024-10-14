@@ -169,7 +169,7 @@
     - name: Register an instance target to a target group
       community.aws.elb_target:
         target_group_name: "{{webtargetgroup.target_group_name}}"
-        target_id: "{ { item } }"
+        target_id: "{{item}}"
         region: "{{ region }}"
         state: present
       loop: "{{ asg_out.instances }}"
