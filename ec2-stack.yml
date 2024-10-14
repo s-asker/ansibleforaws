@@ -96,6 +96,9 @@
                 TargetGroupArn: "{{ webtargetgroup.target_group_arn }}"
       register: alb_out
 
+    - debug:
+        var: launch_template
+
     - name: Create Auto Scaling Group
       community.aws.ec2_asg:
         name: web_asg
