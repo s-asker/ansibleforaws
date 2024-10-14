@@ -174,26 +174,32 @@
           web{{ loop.index }}: {{ result.instances[0].private_ip_address }}
           {% endfor %}
 
+    - name: Copy login key to provisioning directory
+        copy:
+          src: "./site_loginkey.pem"
+          dest: "provisioning/site_loginkey.pem"
+          mode: 0400
+
     - name: Create Dynamic Inventory
       blockinfile:
         path: "provisioning/inventory"
         block: |
-          {% for target in ec2_info.results %}
-          web{{ loop.index }} ansible_host={{ target['Target']['PrivateIpAddress'] }}
+          {% for result in ec2_info.results %}
+          web{{ loop.index }} ansible_host={{ result.instances[0].private_ip_address }}
           {% endfor %}
           cntl ansible_host=127.0.0.1 ansible_connection=local
-          
+
           [websrvgrp]
-          {% for target in target_group_health.target_health_descriptions %}
+          {% for result in ec2_info.results %}
           web{{ loop.index }}
           {% endfor %}
-          
+
           [control]
           cntl
-          
+
           [stack_inst:children]
           websrvgrp
-          
+
           [stack_inst:vars]
           ansible_user=ubuntu
           ansible_ssh_private_key_file=site_loginkey.pem
