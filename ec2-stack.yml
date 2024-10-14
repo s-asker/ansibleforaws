@@ -64,10 +64,6 @@
         network_interfaces:
           - device_index: 0
             associate_public_ip_address: true
-        tag_specifications:
-          - resource_type: instance
-            tags:
-              Project: Web
       register: launch_template
 
 
