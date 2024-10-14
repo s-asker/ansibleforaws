@@ -53,7 +53,7 @@
       register: EC2sg_out
 
     - name: Create Launch Template for ASG
-      amazon.aws.ec2_launch_template:
+      community.aws.ec2_launch_template:
         name: web_launch_template
         region: "{{ region }}"
         key_name: sitekey
