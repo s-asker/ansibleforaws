@@ -166,6 +166,13 @@
       loop: "{{ asg_out.instances }}"
       register: ec2_info
 
+    - name: Register an instance target to a target group
+      community.aws.elb_target:
+        target_group_name: "{{webtargetgroup.target_group_name}}"
+        target_id: "{ { item } }"
+        state: present
+      loop: "{{ asg_out.instances }}"
+
     - name: Insert Private IPs of ASG Instances to a File
       blockinfile:
         path: "provisioning/group_vars/hostsip"
