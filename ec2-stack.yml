@@ -134,7 +134,6 @@
         target_tracking_config:
           predefined_metric_spec:
             predefined_metric_type: ASGAverageCPUUtilization
-            resource_label: "{{ webtargetgroup.target_group_arn }}"
           target_value: 70.0
 
     - name: Create Scaling Policy for Request Count per Target
