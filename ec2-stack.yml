@@ -124,16 +124,15 @@
       community.aws.autoscaling_policy:
         name: cpu_policy
         asg_name: "{{asg_out.auto_scaling_group_name}}"
-        scaling_group_name: web_asg
         region: "{{ region }}"
         adjustment_type: ChangeInCapacity
         cooldown: 300
         state: present
         scaling_adjustment: 1
-        metric_aggregation_type: Average
+        metric_aggregation: Average
         policy_type: TargetTrackingScaling
-        target_tracking_configuration:
-          predefined_metric_specification:
+        target_tracking_config:
+          predefined_metric_spec:
             predefined_metric_type: ASGAverageCPUUtilization
           target_value: 70.0
 
@@ -147,8 +146,8 @@
         state: present
         scaling_adjustment: 1
         policy_type: TargetTrackingScaling
-        target_tracking_configuration:
-          predefined_metric_specification:
+        target_tracking_config:
+          predefined_metric_spec:
             predefined_metric_type: ALBRequestCountPerTarget
             resource_label: "{{ alb_out.load_balancer_arn }}"
           target_value: 75.0
