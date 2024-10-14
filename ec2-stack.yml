@@ -117,7 +117,7 @@
           - "{{ webtargetgroup.target_group_arn }}"
         health_check_type: EC2  # Faster EC2 health checks
         health_check_period: 60
-        wait_for_instances: false
+        wait_for_instances: true
       register: asg_out
 
     - name: Create Scaling Policy for CPU Utilization
@@ -152,40 +152,41 @@
             resource_label: "app/{{ alb_out.load_balancer_arn.split('/')[-2] }}/{{ alb_out.load_balancer_arn.split('/')[-1] }}/targetgroup/{{ webtargetgroup.target_group_name }}/{{ webtargetgroup.target_group_arn.split('/')[-1] }}"
           target_value: 75.0
 
+    - name: Get instances in target group
+        community.aws.elb_target_health:
+          target_group_arn: "{{ webtargetgroup.target_group_arn }}"
+          region: "{{ region }}"
+        register: target_group_health
+
+
     - name: Insert Private IPs of ASG Instances to a File
       blockinfile:
         path: "provisioning/group_vars/hostsip"
         block: |
-          {% for instance in asg_out.instances %}
-          web{{ loop.index }}: {{ instance.private_ip_address }}
+          {% for target in target_group_health.target_health_descriptions %}
+          web{{ loop.index }}: {{ target['Target']['PrivateIpAddress'] }}
           {% endfor %}
 
-    - name: Copy login key to provisioning directory
-      copy:
-        src: "./site_loginkey.pem"
-        dest: "provisioning/site_loginkey.pem"
-        mode: 0400
-
-    - name: Create Dynamic Inventory
-      blockinfile:
-        path: "provisioning/inventory"
-        block: |
-          {% for instance in asg_out.instances %}
-          web{{ loop.index }} ansible_host={{ instance.private_ip_address }}
-          {% endfor %}
-          cntl ansible_host=127.0.0.1 ansible_connection=local
-
-          [websrvgrp]
-          {% for instance in asg_out.instances %}
-          web{{ loop.index }}
-          {% endfor %}
-
-          [control]
-          cntl
-
-          [stack_inst:children]
-          websrvgrp
-
-          [stack_inst:vars]
-          ansible_user=ubuntu
-          ansible_ssh_private_key_file=site_loginkey.pem
+      - name: Create Dynamic Inventory
+        blockinfile:
+          path: "provisioning/inventory"
+          block: |
+            {% for target in target_group_health.target_health_descriptions %}
+            web{{ loop.index }} ansible_host={{ target['Target']['PrivateIpAddress'] }}
+            {% endfor %}
+            cntl ansible_host=127.0.0.1 ansible_connection=local
+            
+            [websrvgrp]
+            {% for target in target_group_health.target_health_descriptions %}
+            web{{ loop.index }}
+            {% endfor %}
+            
+            [control]
+            cntl
+            
+            [stack_inst:children]
+            websrvgrp
+            
+            [stack_inst:vars]
+            ansible_user=ubuntu
+            ansible_ssh_private_key_file=site_loginkey.pem
