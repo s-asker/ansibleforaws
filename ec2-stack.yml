@@ -134,6 +134,7 @@
         target_tracking_config:
           predefined_metric_spec:
             predefined_metric_type: ASGAverageCPUUtilization
+            resource_label: "{{ webtargetgroup.target_group_arn }}"
           target_value: 70.0
 
     - name: Create Scaling Policy for Request Count per Target
@@ -149,7 +150,7 @@
         target_tracking_config:
           predefined_metric_spec:
             predefined_metric_type: ALBRequestCountPerTarget
-            resource_label: "{{ alb_out.load_balancer_arn }}"
+            resource_label: "{{ webtargetgroup.target_group_arn }}"
           target_value: 75.0
 
     - name: Insert Private IPs of ASG Instances to a File
