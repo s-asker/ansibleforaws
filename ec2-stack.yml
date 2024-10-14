@@ -113,8 +113,6 @@
           - "{{ pubsub1id }}"
           - "{{ pubsub2id }}"
           - "{{ pubsub3id }}"
-        load_balancers:
-          - "{{alb_out.load_balancer_name}}"
         target_group_arns:
           - "{{ webtargetgroup.target_group_arn }}"  # ARN from target group
         health_check_type: ELB
