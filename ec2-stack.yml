@@ -61,9 +61,6 @@
         security_groups:
           - "{{ EC2sg_out.group_id }}"
         image_id: "{{ nginx_ami }}"
-        network_interfaces:
-          - device_index: 0
-            associate_public_ip_address: true
       register: launch_template
 
 
