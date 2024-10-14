@@ -178,7 +178,7 @@
       blockinfile:
         path: "provisioning/inventory"
         block: |
-          {% for target in target_group_health.target_health_descriptions %}
+          {% for target in ec2_info.results %}
           web{{ loop.index }} ansible_host={{ target['Target']['PrivateIpAddress'] }}
           {% endfor %}
           cntl ansible_host=127.0.0.1 ansible_connection=local
