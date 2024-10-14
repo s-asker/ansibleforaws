@@ -167,26 +167,26 @@
           web{{ loop.index }}: {{ target['Target']['PrivateIpAddress'] }}
           {% endfor %}
 
-      - name: Create Dynamic Inventory
-        blockinfile:
-          path: "provisioning/inventory"
-          block: |
-            {% for target in target_group_health.target_health_descriptions %}
-            web{{ loop.index }} ansible_host={{ target['Target']['PrivateIpAddress'] }}
-            {% endfor %}
-            cntl ansible_host=127.0.0.1 ansible_connection=local
-            
-            [websrvgrp]
-            {% for target in target_group_health.target_health_descriptions %}
-            web{{ loop.index }}
-            {% endfor %}
-            
-            [control]
-            cntl
-            
-            [stack_inst:children]
-            websrvgrp
-            
-            [stack_inst:vars]
-            ansible_user=ubuntu
-            ansible_ssh_private_key_file=site_loginkey.pem
+    - name: Create Dynamic Inventory
+      blockinfile:
+        path: "provisioning/inventory"
+        block: |
+          {% for target in target_group_health.target_health_descriptions %}
+          web{{ loop.index }} ansible_host={{ target['Target']['PrivateIpAddress'] }}
+          {% endfor %}
+          cntl ansible_host=127.0.0.1 ansible_connection=local
+          
+          [websrvgrp]
+          {% for target in target_group_health.target_health_descriptions %}
+          web{{ loop.index }}
+          {% endfor %}
+          
+          [control]
+          cntl
+          
+          [stack_inst:children]
+          websrvgrp
+          
+          [stack_inst:vars]
+          ansible_user=ubuntu
+          ansible_ssh_private_key_file=site_loginkey.pem
