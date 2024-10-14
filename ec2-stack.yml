@@ -63,7 +63,7 @@
           - device_index: 0
             associate_public_ip_address: true
             groups:
-              - - "{{ EC2sg_out.group_id }}"
+              - "{{ EC2sg_out.group_id }}"
       register: launch_template
 
 
