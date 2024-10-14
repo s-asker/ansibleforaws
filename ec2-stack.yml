@@ -118,10 +118,12 @@
         health_check_type: EC2  # Faster EC2 health checks
         health_check_period: 60
         wait_for_instances: false
+      register: asg_out
 
     - name: Create Scaling Policy for CPU Utilization
       community.aws.autoscaling_policy:
         name: cpu_policy
+        asg_name: "{{asg_out.auto_scaling_group_name}}"
         scaling_group_name: web_asg
         region: "{{ region }}"
         adjustment_type: ChangeInCapacity
@@ -138,7 +140,7 @@
     - name: Create Scaling Policy for Request Count per Target
       community.aws.autoscaling_policy:
         name: request_count_policy
-        scaling_group_name: web_asg
+        asg_name: "{{asg_out.auto_scaling_group_name}}"
         region: "{{ region }}"
         adjustment_type: ChangeInCapacity
         cooldown: 300
