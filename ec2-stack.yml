@@ -225,6 +225,7 @@
         route_table_id: "{{ pubRTid }}"  # ID of the route table in the deployed VPC
         vpc_id: "{{vpcid}}"
         region: "{{ region }}"
+        state: present
         routes:
           - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
