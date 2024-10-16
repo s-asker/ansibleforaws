@@ -160,8 +160,8 @@
 
 
     - name: Run shell script to get instance ID and VPC info
-        command: ./get_instance_id.sh
-        register: ansible_vpc_id_output
+      command: ./get_instance_id.sh
+      register: ansible_vpc_id_output
 
     - name: Debug output from the shell script
       ansible.builtin.debug:
