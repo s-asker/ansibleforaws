@@ -158,6 +158,76 @@
             resource_label: "app/{{ alb_out.load_balancer_arn.split('/')[-2] }}/{{ alb_out.load_balancer_arn.split('/')[-1] }}/targetgroup/{{ webtargetgroup.target_group_name }}/{{ webtargetgroup.target_group_arn.split('/')[-1] }}"
           target_value: 75.0
 
+
+    - name: Run shell script to get instance ID and VPC info
+        command: ./get_instance_id.sh
+        register: ansible_vpc_id_output
+
+    - name: Debug output from the shell script
+      ansible.builtin.debug:
+        var: ansible_vpc_id_output.stdout
+
+    - name: Extract the VPC ID from the output
+      ansible.builtin.set_fact:
+        ansiblevpcid: "{{ ansible_vpc_id_output.stdout.strip() }}"
+
+    - name: Debug Ansible VPC ID
+      ansible.builtin.debug:
+        msg: "Ansible VPC ID: {{ ansiblevpcid }}"
+
+    - name: Get VPC CIDR Block
+      amazon.aws.ec2_vpc_net_info:
+        vpc_ids: "{{ ansiblevpcid }}"
+        region: "{{ region }}"
+      register: vpc_info
+
+    - name: Extract VPC CIDR Block
+      ansible.builtin.set_fact:
+        ansiblevpcCidr: "{{ vpc_info.vpcs[0].cidr_block }}"
+
+    - name: Create a new route table for Ansible VPC
+      amazon.aws.ec2_vpc_route_table:
+        vpc_id: "{{ ansiblevpcid }}"
+        region: "{{ region }}"
+        tags:
+          Name: AnsibleVPC_RT
+      register: ansibleRT
+
+    - debug:
+        var: ansibleRT
+
+    - name: Create VPC Peering Connection
+      community.aws.ec2_vpc_peer:
+        vpc_id: "{{ ansiblevpcid }}"  # VPC of the Ansible control machine
+        peer_vpc_id: "{{ vpcid }}"  # New VPC from earlier playbook
+        region: "{{ region }}"
+      register: vpc_peering
+
+    - name: Accept local VPC peering request
+      community.aws.ec2_vpc_peer:
+        region: "{{ region }}"
+        peering_id: "{{ vpc_peering.peering_id }}"
+        state: accept
+      register: action_peer
+
+    - name: Add route to the newly created Ansible VPC route table
+      amazon.aws.ec2_vpc_route_table:
+        route_table_id: "{{ ansibleRT.route_table.id }}"
+        vpc_id: "{{ansiblevpcid}}"
+        region: "{{region}}"
+        routes:
+          - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
+            vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
+        state: present
+
+    - name: Add route to the deployed VPC route table
+      amazon.aws.ec2_vpc_route_table:
+        route_table_id: "{{ pubRTid }}"  # ID of the route table in the deployed VPC
+        vpc_id: "{{vpcid}}"
+        region: "{{ region }}"
+        routes:
+          - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
+            vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
     - name: Gather information about ASG instances
       amazon.aws.ec2_instance_info:
         instance_ids:
