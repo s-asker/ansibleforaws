@@ -201,11 +201,12 @@
       register: action_peer
 
 
-    - name: Gather IGW information for the VPC
-      amazon.aws.ec2_vpc_igw_info:
-        filters:
-          attachments.vpc_id: "{{ ansiblevpcid }}"
-        region: "{{ region }}"
+    - name: Execute shell command to get IGW ID
+      shell: >
+        aws ec2 describe-internet-gateways 
+        --filters Name=attachment.vpc-id,Values={{ ansiblevpcid }} 
+        --query "InternetGateways[0].InternetGatewayId" 
+        --output text
       register: ansible_igw_info
 
     - name: Add a new route to the main route table (ANSIBLE)
