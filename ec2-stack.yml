@@ -218,8 +218,8 @@
           vpc-id: "{{ ansiblevpcid }}"
       register: ansibleSubnets_out
 
-    - debug:
-        var: ansibleSubnets_out
+    #- debug:
+    #    var: ansibleSubnets_out
 
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
@@ -255,6 +255,21 @@
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
 
       register: publicRT_out
+
+    - name: Modify security group for node exporters
+        amazon.aws.ec2_security_group:
+          name: EC2-SG
+          state: present
+          group_id: "{{EC2sg_out.group_id}}"
+          description: Security group of site instances
+          vpc_id: "{{ vpcid }}"
+          region: "{{ region }}"
+          rules:
+            - proto: tcp
+              from_port: 9100
+              to_port: 9100
+              group_id: "{{ ansiblevpcCidr }}"
+        register: EC2sg_out
 
 
     - name: Gather information about ASG instances
