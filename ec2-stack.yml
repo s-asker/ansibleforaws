@@ -224,14 +224,15 @@
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
-        vpc_id: "{{ansiblevpcid}}"
+        vpc_id: "{{ ansiblevpcid }}"
         routes:
-          - dest: 0.0.0.0/0
-            gateway_id: "{{ansible_igw_info.stdout}}"
-          - dest: ::/0
-            gateway_id: "{{ansible_igw_info.stdout}}"
-          - dest: "{{vpcCidr}}"
-            vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
+        - dest: 0.0.0.0/0
+          gateway_id: "{{ ansible_igw_info.stdout }}"
+        - dest: ::/0
+          gateway_id: "{{ ansible_igw_info.stdout }}"
+        - dest: "{{ vpcCidr }}"
+          vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id }}"
+        subnets: "{{ ansibleSubnets_out.subnets | map(attribute='subnet_id') | list }}"  # Extracting subnet IDs
 
     - name: Set up public subnet route table (STACK)
       amazon.aws.ec2_vpc_route_table:
