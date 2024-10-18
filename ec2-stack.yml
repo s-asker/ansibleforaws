@@ -207,6 +207,9 @@
         executable: /bin/bash
       register: ansible_igw_info
 
+    - debug:
+        var: ansible_igw_info
+
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
