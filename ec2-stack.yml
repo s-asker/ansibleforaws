@@ -201,13 +201,10 @@
       register: action_peer
 
 
-    - name: Execute shell command to get IGW ID
-      shell: >
-        aws ec2 describe-internet-gateways 
-        --filters Name=attachment.vpc-id,Values={{ ansiblevpcid }} 
-        --query "InternetGateways[0].InternetGatewayId" 
-        --output text
+    - name: Execute shell script to get IGW ID
+      command: ./get_igw_id.sh {{ ansiblevpcid }}
       register: ansible_igw_info
+      ignore_errors: yes
 
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
@@ -215,9 +212,9 @@
         vpc_id: "{{ansiblevpcid}}"
         routes:
           - dest: 0.0.0.0/0
-            gateway_id: "{{ansible_igw_info}}"
+            gateway_id: "{{ansible_igw_info.stdout}}"
           - dest: ::/0
-            gateway_id: "{{ansible_igw_info}}"
+            gateway_id: "{{ansible_igw_info.stdout}}"
           - dest: "{{vpcCidr}}"
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
 
