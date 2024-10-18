@@ -204,7 +204,7 @@
     - name: Gather IGW information for the VPC
       amazon.aws.ec2_vpc_igw_info:
         filters:
-          attachments.vpc-id: "{{ ansiblevpcid }}"
+          attachments.vpc_id: "{{ ansiblevpcid }}"
         region: "{{ region }}"
       register: ansible_igw_info
 
