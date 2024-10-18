@@ -261,6 +261,7 @@
         name: EC2-SG
         state: present
         description: Security group of site instances
+        purge_rules: false
         group_id: "{{EC2sg_out.group_id}}"
         vpc_id: "{{ vpcid }}"
         region: "{{ region }}"
