@@ -219,7 +219,7 @@
       register: ansibleSubnets_out
 
     - debug:
-        var: ansibleSubnets_out.results | sum(attribute='subnets', start=[]) | map(attribute='subnet_id')
+        var: ansibleSubnets_out
 
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
