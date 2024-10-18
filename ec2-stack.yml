@@ -215,13 +215,12 @@
         msg: "Main Route Table ID: {{ ansibleRT.route_tables[0].id }}"
 
     - name: Add a new route to the main route table
-      amazon.aws.ec2_vpc_route:
+      amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
         route_table_id: "{{ ansibleRT.route_tables[0].id }}"
         routes:
           - dest: "{{vpcCidr}}"
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
-      register: add_route
 
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
