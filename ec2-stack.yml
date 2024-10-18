@@ -203,19 +203,25 @@
       register: action_peer
 
 
-    - name: Create a new route table for Ansible VPC
-      amazon.aws.ec2_vpc_route_table:
-        vpc_id: "{{ ansiblevpcid }}"
+    - name: Get the route table information for the VPC
+      amazon.aws.ec2_vpc_route_table_info:
         region: "{{ region }}"
-        routes:
-          - dest: 0.0.0.0/0
-            gateway_id: "{{ igwid }}"
-          - dest: ::/0
-            gateway_id: "{{ igwid }}"
-          - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
-            vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
-        state: present
+        filters:
+          vpc-id: "{{ ansiblevpcid }}"
       register: ansibleRT
+
+    - name: Debug to verify the route table ID
+      debug:
+        msg: "Main Route Table ID: {{ ansibleRT.route_tables[0].id }}"
+
+    - name: Add a new route to the main route table
+      amazon.aws.ec2_vpc_route:
+        region: "{{ region }}"
+        route_table_id: "{{ ansibleRT.route_tables[0].id }}"
+        routes:
+          - dest: "{{vpcCidr}}"
+            vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
+      register: add_route
 
     - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
