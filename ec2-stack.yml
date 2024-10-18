@@ -225,6 +225,8 @@
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
         vpc_id: "{{ ansiblevpcid }}"
+        tags:
+          Name: AnsiblePeeringRT
         routes:
         - dest: 0.0.0.0/0
           gateway_id: "{{ ansible_igw_info.stdout }}"
