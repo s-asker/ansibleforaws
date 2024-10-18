@@ -257,19 +257,19 @@
       register: publicRT_out
 
     - name: Modify security group for node exporters
-        amazon.aws.ec2_security_group:
-          name: EC2-SG
-          state: present
-          group_id: "{{EC2sg_out.group_id}}"
-          description: Security group of site instances
-          vpc_id: "{{ vpcid }}"
-          region: "{{ region }}"
-          rules:
-            - proto: tcp
-              from_port: 9100
-              to_port: 9100
-              group_id: "{{ ansiblevpcCidr }}"
-        register: EC2sg_out
+      amazon.aws.ec2_security_group:
+        name: EC2-SG
+        state: present
+        group_id: "{{EC2sg_out.group_id}}"
+        description: Security group of site instances
+        vpc_id: "{{ vpcid }}"
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            from_port: 9100
+            to_port: 9100
+            group_id: "{{ ansiblevpcCidr }}"
+      register: EC2sg_out
 
 
     - name: Gather information about ASG instances
