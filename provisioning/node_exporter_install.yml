@@ -1,0 +1,40 @@
+---
+- name: Install and start Node Exporter
+  hosts: websrvgrp
+  become: yes
+  tasks:
+    - name: Download Node Exporter
+      ansible.builtin.get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        dest: /tmp/node_exporter.tar.gz
+        mode: '0644'
+
+    - name: Extract Node Exporter
+      ansible.builtin.unarchive:
+        src: /tmp/node_exporter.tar.gz
+        dest: /usr/local/bin/
+        remote_src: yes
+        extra_opts: [--strip-components=1]
+
+    - name: Create Node Exporter service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+
+          [Service]
+          User=root
+          ExecStart=/usr/local/bin/node_exporter
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Start and enable Node Exporter service
+      ansible.builtin.systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
