@@ -185,14 +185,6 @@
       ansible.builtin.set_fact:
         ansiblevpcCidr: "{{ vpc_info.vpcs[0].cidr_block }}"
 
-    - name: Create a new route table for Ansible VPC
-      amazon.aws.ec2_vpc_route_table:
-        vpc_id: "{{ ansiblevpcid }}"
-        region: "{{ region }}"
-        tags:
-          Name: AnsibleVPC_RT
-      register: ansibleRT
-
     - debug:
         var: ansibleRT
 
@@ -210,25 +202,38 @@
         state: accept
       register: action_peer
 
-    - name: Add route to the newly created Ansible VPC route table
+
+    - name: Create a new route table for Ansible VPC
       amazon.aws.ec2_vpc_route_table:
-        route_table_id: "{{ ansibleRT.route_table.id }}"
-        vpc_id: "{{ansiblevpcid}}"
-        region: "{{region}}"
+        vpc_id: "{{ ansiblevpcid }}"
+        region: "{{ region }}"
         routes:
           - dest: "{{ vpcCidr }}"  # CIDR of the new VPC
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
         state: present
+      register: ansibleRT
 
-    - name: Add route to the deployed VPC route table
+    - name: Set up public subnet route table
       amazon.aws.ec2_vpc_route_table:
-        route_table_id: "{{ pubRTid }}"  # ID of the route table in the deployed VPC
         vpc_id: "{{vpcid}}"
-        region: "{{ region }}"
-        state: present
+        region: "{{region}}"
+        tags:
+          Name: PublicRT
+        subnets:
+          - "{{ pubsub1id }}"
+          - "{{ pubsub2id }}"
+          - "{{ pubsub3id }}"
         routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igwid }}"
+          - dest: ::/0
+            gateway_id: "{{ igwid }}"
           - dest: "{{ ansiblevpcCidr }}"  # CIDR block of the Ansible VPC
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
+
+      register: publicRT_out
+
+
     - name: Gather information about ASG instances
       amazon.aws.ec2_instance_info:
         instance_ids:
