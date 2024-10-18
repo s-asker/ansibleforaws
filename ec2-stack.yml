@@ -210,6 +210,16 @@
       debug:
         var: ansible_igw_info.stdout
 
+
+    - name: Get subnets of ansible machine vpc
+      amazon.aws.ec2_vpc_subnet_info:
+        filters:
+          vpc-id: "{{ ansiblevpcid }}"
+      register: ansibleSubnets_out
+
+    - debug:
+        var: "{{ subnet_info.results | sum(attribute='subnets', start=[]) | map(attribute='subnet_id') }}"
+        
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
