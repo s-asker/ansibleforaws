@@ -206,6 +206,10 @@
       register: ansible_igw_info
       ignore_errors: yes
 
+    - name: Display the IGW ID
+      debug:
+        var: ansible_igw_info.stdout
+
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
