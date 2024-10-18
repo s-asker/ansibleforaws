@@ -261,14 +261,13 @@
         name: EC2-SG
         state: present
         group_id: "{{EC2sg_out.group_id}}"
-        description: Security group of site instances
         vpc_id: "{{ vpcid }}"
         region: "{{ region }}"
         rules:
           - proto: tcp
             from_port: 9100
             to_port: 9100
-            group_id: "{{ ansiblevpcCidr }}"
+            cidr_ip: "{{ ansiblevpcCidr }}"
       register: EC2sg_out
 
 
