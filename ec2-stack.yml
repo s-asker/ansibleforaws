@@ -203,16 +203,12 @@
       register: action_peer
 
 
-    - name: Get the route table information for the VPC
-      amazon.aws.ec2_vpc_route_table_info:
-        region: "{{ region }}"
+    - name: Retrieve Internet Gateway by VPC ID
+      amazon.aws.ec2_vpc_igw_info:
+        region: "{{region}}"
         filters:
-          vpc-id: "{{ ansiblevpcid }}"
-      register: ansibleRT
-
-    - name: Debug to verify the route table ID
-      debug:
-        msg: "Main Route Table ID: {{ ansibleRT.route_tables[0].id }}"
+          vpc-id: "{{ansiblevpcid}}"  # Replace with your actual VPC ID
+      register: igw_info
 
     - name: Add a new route to the main route table (ANSIBLE)
       amazon.aws.ec2_vpc_route_table:
@@ -220,6 +216,10 @@
         vpc_id: "{{ansiblevpcid}}"
         route_table_id: "{{ ansibleRT.route_tables[0].id }}"
         routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{igw_info}}"
+          - dest: ::/0
+            gateway_id: "{{igw_info}}"
           - dest: "{{vpcCidr}}"
             vpc_peering_connection_id: "{{ vpc_peering.vpc_peering_connection.vpc_peering_connection_id  }}"
 
