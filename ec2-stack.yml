@@ -260,6 +260,7 @@
       amazon.aws.ec2_security_group:
         name: EC2-SG
         state: present
+        description: Security group of site instances
         group_id: "{{EC2sg_out.group_id}}"
         vpc_id: "{{ vpcid }}"
         region: "{{ region }}"
