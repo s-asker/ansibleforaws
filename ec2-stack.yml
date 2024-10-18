@@ -185,8 +185,6 @@
       ansible.builtin.set_fact:
         ansiblevpcCidr: "{{ vpc_info.vpcs[0].cidr_block }}"
 
-    - debug:
-        var: ansibleRT
 
     - name: Create VPC Peering Connection
       community.aws.ec2_vpc_peer:
@@ -213,7 +211,6 @@
       amazon.aws.ec2_vpc_route_table:
         region: "{{ region }}"
         vpc_id: "{{ansiblevpcid}}"
-        route_table_id: "{{ ansibleRT.route_tables[0].id }}"
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{ansible_igw_info}}"
