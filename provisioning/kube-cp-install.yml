@@ -18,10 +18,19 @@
         url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
         state: present
 
+    - name: Remove duplicate Grafana repository configurations
+      file:
+        path: "/etc/apt/sources.list.d/grafana.list"
+        state: absent
+
     - name: Add Kubernetes APT repository
       apt_repository:
-        repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+        repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
         state: present
+        filename: "kubernetes"
+        update_cache: yes
+      tags: k8s_repo
+
 
     - name: Install Kubernetes packages
       apt:
