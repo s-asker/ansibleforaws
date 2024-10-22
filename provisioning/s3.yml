@@ -36,7 +36,7 @@
 
     - name: Upload static files to S3 Bucket using AWS CLI
       shell: >
-        aws s3 cp {{ unzip_path }}/ s3://{{ s3_bucket }}/ --recursive
+        aws s3 cp {{ unzip_path }}/* s3://{{ s3_bucket }}/ --recursive
 
 
     - name: Delete local template ZIP
