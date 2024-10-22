@@ -24,12 +24,6 @@
         state: directory
         mode: '0755'
 
-    - name: Unzip website template
-      ansible.builtin.unarchive:
-        src: "{{download_path}}"
-        dest: "{{ unzip_path }}"
-        remote_src: no  # Since the zip file is local to the control machine
-
     - name: Download website template
       get_url:
         url: "{{ template_url }}"
