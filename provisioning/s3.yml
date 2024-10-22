@@ -1,0 +1,43 @@
+﻿---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    template_url: "https://www.tooplate.com/zip-templates/2098_health.zip"
+    download_path: "/tmp/website_template.zip"
+    unzip_path: "/tmp/website_files"
+    s3_bucket: "tooplatebucketansible"
+  tasks:
+    # Create a simple S3 bucket
+    - name: Create an S3 Bucket to store the static files of the website
+      amazon.aws.s3_bucket:
+        name: "{{ s3_bucket }}"
+        state: present
+    - name: Install the package "unzip"
+      ansible.builtin.apt:
+        name: unzip
+        state: present
+      become: true
+    - name: Download website template
+      get_url:
+        url: "{{ template_url }}"
+        dest: "{{ download_path }}"
+    - name: Unzip website template
+      unarchive:
+        src: "{{ download_path }}"
+        dest: "{{ unzip_path }}"
+        remote_src: yes
+    - name: Upload the website static files on the S3 Bucket
+      community.aws.s3_sync:
+        bucket: "{{ s3_bucket }}"
+        file_root: "{{ unzip_path }}"/
+
+    - name: Delete local template ZIP
+      file:
+        path: "{{ download_path }}"
+        state: absent
+    - name: Delete unzipped website files
+      file:
+        path: "{{ unzip_path }}"
+        state: absent
+
