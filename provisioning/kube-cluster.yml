@@ -1,0 +1,21 @@
+---
+- name: Initialize Kubernetes control plane
+  hosts: control
+  become: yes
+  gather_facts: yes  # This will gather the private IP automatically
+  tasks:
+    - name: Initialize the Kubernetes control plane
+      command: kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} --pod-network-cidr=192.168.0.0/16
+      register: kubeadm_init
+
+    - name: Create .kube directory for Kubernetes config
+      file:
+        path: /root/.kube
+        state: directory
+        mode: 0700
+
+    - name: Copy kubeconfig file to .kube directory
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
