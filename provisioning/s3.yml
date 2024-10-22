@@ -36,7 +36,7 @@
     - name: Upload the website static files on the S3 Bucket
       community.aws.s3_sync:
         bucket: "{{ s3_bucket }}"
-        file_root: "{{ unzip_path }}"
+        file_root: "{{ unzip_path }}/*"
         include: '*'
 
     - name: Delete local template ZIP
