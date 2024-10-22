@@ -6,6 +6,7 @@
     template_url: "https://www.tooplate.com/zip-templates/2098_health.zip"
     download_path: "/tmp/website_template.zip"
     unzip_path: "/tmp/website_files"
+    unzip_dir: "/tmp/website_files/"
     s3_bucket: "tooplatebucketansible"
   tasks:
     # Create a simple S3 bucket
@@ -36,7 +37,7 @@
     - name: Upload the website static files on the S3 Bucket
       community.aws.s3_sync:
         bucket: "{{ s3_bucket }}"
-        file_root: "{{ unzip_path }}"/*
+        file_root: "{{ unzip_dir }}"
         include: '*'
 
     - name: Delete local template ZIP
