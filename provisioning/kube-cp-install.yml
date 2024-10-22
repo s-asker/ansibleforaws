@@ -7,7 +7,6 @@
       apt:
         name: docker.io
         state: present
-        update_cache: yes
 
     - name: Install apt-transport-https
       apt:
@@ -31,7 +30,6 @@
           - kubeadm
           - kubectl
         state: present
-        update_cache: yes
 
     - name: Hold Kubernetes packages at current version
       apt:
@@ -40,5 +38,4 @@
           - kubeadm
           - kubectl
         state: present
-        update_cache: yes
         lock: yes
