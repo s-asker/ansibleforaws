@@ -5,6 +5,12 @@
     - name: Import IDs
       include_vars: ../vars/lambda_setup
 
+    - name: Create a role with description and tags
+      amazon.aws.iam_role:
+        name: LambdaRole
+        assume_role_policy_document: "{{ lookup('file','templates/policy.json') }}"
+        description: This role is specifically created for lambda-instances interaction
+      register: lambda_role
 
     - name: Upload Lambda code to S3
       aws_s3:
@@ -14,23 +20,38 @@
         mode: put
         region: "{{region}}"
 
-    - name: Create Lambda function
-      lambda:
+    - name: Create Lambda function to sync S3 on instance launch
+      community.aws.lambda:
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
         handler: lambda_function.lambda_handler
-        s3_bucket: "{{s3OUT}}"
-        s3_key: lambda_function.py
-        role: arn:aws:iam::your-account-id:role/lambda-execution-role
+        s3_bucket: "{{ s3OUT }}"          # S3 bucket containing the Lambda code
+        s3_key: "lambda_function.py"      # Key of the Lambda code in the bucket
+        role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
 
-    - name: Attach lifecycle hook to ASG
+    - name: Create SNS topic for ASG triggers
+      community.aws.sns_topic:
+        name: "asg-launch-triggers"
+        state: present
+      register: sns_topic
+
+    - name: Create ASG lifecycle hook for instance launch
       command: >
         aws autoscaling put-lifecycle-hook
-        --lifecycle-hook-name "NewInstanceHook"
-        --auto-scaling-group-name "your-asg-name"
+        --lifecycle-hook-name "NewInstanceLaunch"
+        --auto-scaling-group-name "{{ asg_out.name }}"
         --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
-        --notification-target-arn "arn:aws:sns:your-sns-topic"
-        --role-arn "arn:aws:iam::your-account-id:role/asg-lifecycle-role"
+        --notification-target-arn "{{ sns_topic.arn }}"
+        --role-arn "{{ lambda_role.iam_role.arn }}"
+
+    - name: Add SNS trigger to Lambda function
+      community.aws.lambda_event:
+        state: present
+        function_name: "asg-instance-sync"
+        event_source_arn: "{{ sns_topic.arn }}"
+
+
+
