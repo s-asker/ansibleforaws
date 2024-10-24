@@ -1,0 +1,36 @@
+---
+- name: Deploy Lambda function for syncing ASG instances
+  hosts: localhost
+  tasks:
+    - name: Import IDs
+      include_vars: ../vars/lambda_setup
+
+
+    - name: Upload Lambda code to S3
+      aws_s3:
+        bucket: "{{s3OUT}}"
+        object: lambda_function.py
+        src: ./lambda_function.py
+        mode: put
+        region: "{{region}}"
+
+    - name: Create Lambda function
+      lambda:
+        state: present
+        name: "asg-instance-sync"
+        runtime: python3.9
+        handler: lambda_function.lambda_handler
+        s3_bucket: "{{s3OUT}}"
+        s3_key: lambda_function.py
+        role: arn:aws:iam::your-account-id:role/lambda-execution-role
+        timeout: 60
+        memory_size: 128
+
+    - name: Attach lifecycle hook to ASG
+      command: >
+        aws autoscaling put-lifecycle-hook
+        --lifecycle-hook-name "NewInstanceHook"
+        --auto-scaling-group-name "your-asg-name"
+        --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
+        --notification-target-arn "arn:aws:sns:your-sns-topic"
+        --role-arn "arn:aws:iam::your-account-id:role/asg-lifecycle-role"

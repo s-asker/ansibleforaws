@@ -299,7 +299,7 @@
 
     - name: Add a new variable to the vars/vpc-output_vars file
       blockinfile:
-        path: "vars/vpc-output_vars"
+        path: "vars/lambda_setup"
         block: |
           asgOUT: {{asg_out.auto_scaling_group_name}}
         insertafter: EOF

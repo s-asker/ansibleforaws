@@ -6,15 +6,16 @@
     template_url: "https://www.tooplate.com/zip-templates/2098_health.zip"
     download_path: "/tmp/website_template.zip"
     unzip_path: "/tmp/website_files"
-    s3_bucket: "tooplatebucketansible"
     region: "us-east-2"
   tasks:
     # Create a simple S3 bucket
     - name: Create an S3 Bucket to store the static files of the website
       amazon.aws.s3_bucket:
-        name: "{{ s3_bucket }}"
+        name: tooplatebucketansible
         state: present
         region: "{{region}}"
+      register: s3_out
+
     - name: Install the package "unzip"
       ansible.builtin.apt:
         name: unzip
@@ -49,4 +50,11 @@
       file:
         path: "{{ unzip_path }}"
         state: absent
+
+    - name: Add a new variable to the vars/vpc-output_vars file
+      blockinfile:
+        path: "vars/lambda_setup"
+        block: |
+          s3OUT: {{s3_out.name}}
+        insertafter: EOF
 
