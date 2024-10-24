@@ -7,12 +7,14 @@
     download_path: "/tmp/website_template.zip"
     unzip_path: "/tmp/website_files"
     s3_bucket: "tooplatebucketansible"
+    region: "us-east-2"
   tasks:
     # Create a simple S3 bucket
     - name: Create an S3 Bucket to store the static files of the website
       amazon.aws.s3_bucket:
         name: "{{ s3_bucket }}"
         state: present
+        region: "{{region}}"
     - name: Install the package "unzip"
       ansible.builtin.apt:
         name: unzip
