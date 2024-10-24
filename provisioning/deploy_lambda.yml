@@ -31,6 +31,8 @@
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
+      register: lambda_out
+
 
     - name: Create SNS topic for ASG triggers
       community.aws.sns_topic:
@@ -50,7 +52,7 @@
     - name: Add SNS trigger to Lambda function
       community.aws.lambda_event:
         state: present
-        function_name: "asg-instance-sync"
+        function_name: "{{lambda_out.configuration.function_name}}"
         event_source_arn: "{{ sns_topic.arn }}"
 
 
