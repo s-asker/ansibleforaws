@@ -297,6 +297,13 @@
         dest: "provisioning/site_loginkey.pem"
         mode: 0400
 
+    - name: Add a new variable to the vars/vpc-output_vars file
+      blockinfile:
+        path: "vars/vpc-output_vars"
+        block: |
+          asgOUT: {{asg_out.auto_scaling_group_name}}
+        insertafter: EOF
+
     - name: Create Dynamic Inventory
       blockinfile:
         path: "provisioning/inventory"
