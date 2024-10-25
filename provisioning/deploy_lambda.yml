@@ -42,7 +42,7 @@
         region: "{{region}}"
 
     - name: Create Lambda function to sync S3 on instance launch
-      community.aws.lambda:
+      amazon.aws.lambda:
         region: "{{region}}"
         state: present
         name: "asg-instance-sync"
