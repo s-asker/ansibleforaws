@@ -100,7 +100,7 @@
       community.aws.lambda_event:
         state: present
         function_name: "{{lambda_out.configuration.function_name}}"
-        event_source_arn: "{{ sns_topic.arn }}"
+        event_source_arn: "{{ sns_topic.sns_arn }}"
 
 
 
