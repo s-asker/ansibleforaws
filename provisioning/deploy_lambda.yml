@@ -106,12 +106,12 @@
       #  --action "lambda:InvokeFunction"
       #  --source-arn "{{ sns_topic.sns_arn }}"
 
-    - name: Add SNS trigger to Lambda function
+    - name: Subscribe Lambda function to SNS topic
       command: >
-        aws lambda create-event-source-mapping
-        --function-name "{{ lambda_out.configuration.function_name }}"
-        --event-source-arn "{{ sns_topic.sns_arn }}"
-        --batch-size 100
+        aws sns subscribe
+        --topic-arn "{{ sns_topic.sns_arn }}"
+        --protocol lambda
+        --notification-endpoint "{{ lambda_out.configuration.function_arn }}"
         --region "{{ region }}"
 
 
