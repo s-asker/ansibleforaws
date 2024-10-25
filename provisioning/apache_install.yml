@@ -1,0 +1,9 @@
+﻿- name: Install stress package on machines
+  hosts: websrvgrp
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Install apache httpd
+      ansible.builtin.apt:
+        name: apache2
+        state: present
