@@ -5,12 +5,30 @@
     - name: Import IDs
       include_vars: ../vars/lambda_setup
 
-    - name: Create a role with description and tags
+    - name: Create IAM role for Lambda with administrative privileges
       amazon.aws.iam_role:
         name: LambdaRole
-        assume_role_policy_document: "{{ lookup('file','templates/policy.json') }}"
-        description: This role is specifically created for lambda-instances interaction
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+        description: "Role for Lambda with administrative privileges"
       register: lambda_role
+
+    - name: Attach AdministratorAccess policy to Lambda role
+      community.aws.iam_policy:
+        state: present
+        role: "{{ lambda_role.iam_role.name }}"
+        policy_arn: "arn:aws:iam::aws:policy/AdministratorAccess"
 
     - name: Upload Lambda code to S3
       aws_s3:
