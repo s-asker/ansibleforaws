@@ -26,9 +26,11 @@
 
     - name: Attach AdministratorAccess policy to Lambda role
       community.aws.iam_policy:
+        iam_name: "{{ lambda_role.iam_role.role_name }}"
+        iam_type: role
         state: present
-        role: "{{ lambda_role.iam_role.name }}"
-        policy_arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+        policy_name: "AdministratorAccess"
+
 
     - name: Upload Lambda code to S3
       aws_s3:
