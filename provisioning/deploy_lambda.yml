@@ -99,6 +99,7 @@
     - name: Add SNS trigger to Lambda function
       community.aws.lambda_event:
         state: present
+        region: "{{region}}"
         function_name: "{{lambda_out.configuration.function_name}}"
         source_params:
           source_arn: "{{ sns_topic.sns_arn }}"
