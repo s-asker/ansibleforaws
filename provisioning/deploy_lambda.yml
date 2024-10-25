@@ -67,7 +67,7 @@
       command: >
         aws autoscaling put-lifecycle-hook
         --lifecycle-hook-name "NewInstanceLaunch"
-        --auto-scaling-group-name "{{ asg_out.name }}"
+        --auto-scaling-group-name "{{asgOUT}}"
         --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
         --notification-target-arn "{{ sns_topic.arn }}"
         --role-arn "{{ lambda_role.iam_role.arn }}"
