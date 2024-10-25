@@ -1,0 +1,5 @@
+---
+- import_playbook: s3.yml
+- import_playbook: deploy_lambda.yml
+- import_playbook: stress_install.yml
+- import_playbook: apache_install.yml
