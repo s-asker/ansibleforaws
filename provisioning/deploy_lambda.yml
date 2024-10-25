@@ -94,7 +94,7 @@
         --auto-scaling-group-name "{{asgOUT}}"
         --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
         --notification-target-arn "{{ sns_topic.sns_arn }}"
-        --role-arn "{{ lambda_role.iam_role.arn }}"
+        --role-arn "{{ lifecycle_role.iam_role.arn }}"
 
     - name: Add SNS trigger to Lambda function
       community.aws.lambda_event:
