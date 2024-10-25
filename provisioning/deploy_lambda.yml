@@ -43,6 +43,7 @@
 
     - name: Create Lambda function to sync S3 on instance launch
       community.aws.lambda:
+        region: "{{region}}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
@@ -57,6 +58,7 @@
 
     - name: Create SNS topic for ASG triggers
       community.aws.sns_topic:
+        region: "{{region}}"
         name: "asg-launch-triggers"
         state: present
       register: sns_topic
