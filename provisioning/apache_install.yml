@@ -1,4 +1,5 @@
-﻿- name: Install stress package on machines
+﻿---
+- name: Install stress package on machines
   hosts: websrvgrp
   become: yes
   gather_facts: yes
