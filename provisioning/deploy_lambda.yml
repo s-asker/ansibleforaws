@@ -39,7 +39,7 @@
         object: lambda_function.py
         src: ./lambda_function.py
         mode: put
-        region: "{{region}}"
+
 
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
