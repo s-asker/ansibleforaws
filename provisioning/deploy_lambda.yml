@@ -96,14 +96,15 @@
         --notification-target-arn "{{ sns_topic.sns_arn }}"
         --role-arn "{{ lifecycle_role.iam_role.arn }}"
 
-    - name: Grant permission to SNS to invoke Lambda function
-      command: >
-        aws lambda add-permission
-        --region "{{region}}"
-        --function-name "{{lambda_out.configuration.function_name}}"
-        --principal sns.amazonaws.com
-        --action "lambda:InvokeFunction"
-        --source-arn "{{ sns_topic.sns_arn }}"
+    #- name: Grant permission to SNS to invoke Lambda function
+   #   command: >
+    #    aws lambda add-permission
+    #    --region "{{region}}"
+     #   --function-name "{{lambda_out.configuration.function_name}}"
+     #   --principal sns.amazonaws.com
+      #  --statement-id my-sns-invocation1
+      #  --action "lambda:InvokeFunction"
+      #  --source-arn "{{ sns_topic.sns_arn }}"
 
     - name: Add SNS trigger to Lambda function
       community.aws.lambda_event:
