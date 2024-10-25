@@ -66,6 +66,7 @@
     - name: Create ASG lifecycle hook for instance launch
       command: >
         aws autoscaling put-lifecycle-hook
+        --region "{{region}}"
         --lifecycle-hook-name "NewInstanceLaunch"
         --auto-scaling-group-name "{{asgOUT}}"
         --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
