@@ -99,6 +99,7 @@
     - name: Grant permission to SNS to invoke Lambda function
       command: >
         aws lambda add-permission
+        --region "{{region}}"
         --function-name "{{lambda_out.configuration.function_name}}"
         --principal sns.amazonaws.com
         --statement-id my-sns-invocation
