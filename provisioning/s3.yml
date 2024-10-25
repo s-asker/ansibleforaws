@@ -53,7 +53,7 @@
 
     - name: Add a new variable to the vars/vpc-output_vars file
       blockinfile:
-        path: "vars/lambda_setup"
+        path: "../vars/lambda_setup"
         block: |
           s3OUT: {{s3_out.name}}
         insertafter: EOF
