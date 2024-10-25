@@ -11,7 +11,7 @@
     # Create a simple S3 bucket
     - name: Create an S3 Bucket to store the static files of the website
       amazon.aws.s3_bucket:
-        name: tooplatebucketansible
+        name: "tooplatebucketansibleweb"
         state: present
         region: "{{region}}"
       register: s3_out
