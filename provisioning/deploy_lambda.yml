@@ -32,7 +32,30 @@
         policy_name: "AdministratorAccess"
         policy_json: "{{ lookup('template', 'templates/policy.json.j2') }}"
 
-
+    - name: Create IAM role for Autoscaling Lifecycle hook with administrative privileges
+      amazon.aws.iam_role:
+        name: LifeCycleRole
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "autoscaling.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+      register: lifecycle_role
+    - name: Attach AdministratorAccess policy to Autoscaling Lifecycle hook
+      community.aws.iam_policy:
+        iam_name: "{{ lifecycle_role.iam_role.role_name }}"
+        iam_type: role
+        state: present
+        policy_name: "SNS"
+        policy_json: "{{ lookup('template', 'templates/policy2.json.j2') }}"
     - name: Upload Lambda code to S3
       aws_s3:
         bucket: "{{s3OUT}}"
