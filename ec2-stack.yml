@@ -297,12 +297,11 @@
         dest: "provisioning/site_loginkey.pem"
         mode: 0400
 
-    - name: Add a new variable to the vars/vpc-output_vars file
-      blockinfile:
+    - name: Add a new variable to the vars/lambda_setup file
+      lineinfile:
         path: "vars/lambda_setup"
-        block: |
-          asgOUT: {{asg_out.auto_scaling_group_name}}
-        insertafter: EOF
+        line: "asgOUT: {{asg_out.auto_scaling_group_name}}"
+        state: present
 
     - name: Create Dynamic Inventory
       blockinfile:
