@@ -102,7 +102,6 @@
         --region "{{region}}"
         --function-name "{{lambda_out.configuration.function_name}}"
         --principal sns.amazonaws.com
-        --statement-id my-sns-invocation
         --action "lambda:InvokeFunction"
         --source-arn "{{ sns_topic.sns_arn }}"
 
