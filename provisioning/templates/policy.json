@@ -10,6 +10,11 @@
       "Effect": "Allow",
       "Action": ["ssm:SendCommand"],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["ssm:GetDocument", "ssm:ListCommandInvocations"],
+      "Resource": "*"
     }
   ]
 }
