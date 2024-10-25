@@ -103,6 +103,7 @@
         function_name: "{{lambda_out.configuration.function_name}}"
         source_params:
           source_arn: "{{ sns_topic.sns_arn }}"
+          batch_size: 100
 
 
 
