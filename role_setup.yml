@@ -1,0 +1,57 @@
+- hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: Create IAM Policy for S3 Access
+      amazon.aws.iam_policy:
+        name: "EC2S3AccessPolicy"
+        policy_document: >
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:ListBucket",
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "Resource": [
+                  "arn:aws:s3:::your-bucket-name",
+                  "arn:aws:s3:::your-bucket-name/*"
+                ]
+              }
+            ]
+          }
+      register: policy_result
+
+    - name: Create IAM Role for EC2
+      amazon.aws.iam_role:
+        name: "EC2S3AccessRole"
+        assume_role_policy_document: >
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "ec2.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+      register: role_result
+
+    - name: Attach S3 Access Policy to the Role
+      amazon.aws.iam_policy_attachment:
+        name: "EC2S3AccessPolicyAttachment"
+        policy_arn: "{{ policy_result.policy.arn }}"
+        roles:
+          - "{{ role_result.role.name }}"
+
+    - name: Create Instance Profile
+      amazon.aws.iam_instance_profile:
+        name: "EC2S3AccessInstanceProfile"
+        role: "{{ role_result.role.name }}"
+        path: "/"
+      register: instance_profile_result
