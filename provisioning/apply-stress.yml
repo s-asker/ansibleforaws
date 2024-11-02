@@ -1,0 +1,6 @@
+---
+- name: Execute a simple command on a remote host
+  hosts: websrvgrp
+  tasks:
+    - name: Apply stress on machines
+      ansible.builtin.shell: "nohup stress -c 4 -t 360 &"
