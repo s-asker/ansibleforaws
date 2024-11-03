@@ -15,10 +15,7 @@
                   "s3:GetObject",
                   "s3:PutObject"
                 ],
-                "Resource": [
-                  "arn:aws:s3:::your-bucket-name",
-                  "arn:aws:s3:::your-bucket-name/*"
-                ]
+                "Resource": "*"
               }
             ]
           }
@@ -55,3 +52,9 @@
         role: "{{ role_result.role.name }}"
         path: "/"
       register: instance_profile_result
+
+    - name: Add a new variable to the vars/lambda_setup file
+      lineinfile:
+        path: "vars/vpc_setup.yml"
+        line: "instance_profile_arn: {{instance_profile_result.iam_instance_profile.arn}}"
+        state: present
