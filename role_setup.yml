@@ -1,7 +1,11 @@
 - hosts: localhost
   gather_facts: False
   tasks:
+    - name: Import S3 Bucket name
     - name: Create IAM Policy for S3 Access
+      ansible.builtin.include_vars:
+        file: vars/vpc-output_vars
+
       amazon.aws.iam_policy:
         name: "EC2S3AccessPolicy"
         policy_document: >
@@ -15,7 +19,10 @@
                   "s3:GetObject",
                   "s3:PutObject"
                 ],
-                "Resource": "*"
+                "Resource": [
+                  "arn:aws:s3:::{{s3OUT}}",
+                  "arn:aws:s3:::{{s3OUT}}/*"
+                ]
               }
             ]
           }

@@ -1,0 +1,18 @@
+---
+- name: Setup Project Stack
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Create an S3 Bucket to store the static files of the website
+    amazon.aws.s3_bucket:
+      name: "tooplatebucketansibleweb"
+      state: present
+      region: "us-east-2"
+    register: s3_out
+
+  - name: Add a new variable to the vars/vpc-output_vars file
+    lineinfile:
+      path: "vars/vpc-output_vars"
+      line: "s3OUT: {{s3_out.name}}"
+      state: present

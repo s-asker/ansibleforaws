@@ -3,8 +3,8 @@
   hosts: localhost
   tasks:
     - name: Import IDs
-      include_vars: ../vars/lambda_setup
-
+      include_vars: ../vars/vpc-output_vars
+      
     - name: Create IAM role for Lambda with administrative privileges
       amazon.aws.iam_role:
         name: LambdaRole

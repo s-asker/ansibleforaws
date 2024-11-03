@@ -6,17 +6,17 @@
     mount_path: "/var/www/html"
   tasks:
   - name: Import IDs
-    include_vars: ../vars/lambda_setup
+    include_vars: ../vars/vpc-output_vars
 
   - name: Install the package "s3fs-fuse"
-      ansible.builtin.apt:
-        name:
-          - s3fs
-        state: present
-      become: true
+    ansible.builtin.apt:
+      name:
+        - s3fs
+      state: present
+    become: true
 
   - name: Mount S3 bucket to /var/www/html using s3fs
-      shell: |
-        echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,iam_role=auto 0 0" >> /etc/fstab
-        s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other
-      become: true
+    shell: |
+      echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,iam_role=auto 0 0" >> /etc/fstab
+      s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other
+    become: true

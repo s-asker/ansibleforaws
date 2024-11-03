@@ -9,12 +9,9 @@
     region: "us-east-2"
   tasks:
     # Create a simple S3 bucket
-    - name: Create an S3 Bucket to store the static files of the website
-      amazon.aws.s3_bucket:
-        name: "tooplatebucketansibleweb"
-        state: present
-        region: "{{region}}"
-      register: s3_out
+    - name: Import S3 Bucket Name
+      ansible.builtin.include_vars:
+        file: ../vars/vpc-output_vars
 
     - name: Install the package "unzip"
       ansible.builtin.apt:
@@ -51,10 +48,5 @@
         path: "{{ unzip_path }}"
         state: absent
 
-    - name: Add a new variable to the vars/vpc-output_vars file
-      blockinfile:
-        path: "../vars/lambda_setup"
-        block: |
-          s3OUT: {{s3_out.name}}
-        insertafter: EOF
+    
 
