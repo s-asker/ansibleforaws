@@ -55,8 +55,7 @@
     - name: Create Instance Profile
       amazon.aws.iam_instance_profile:
         name: "EC2S3AccessInstanceProfile"
-        role: "{{ role_result.role.name }}"
-        path: "/"
+        role: "{{ role_result.iam_role.role_name }}"
       register: instance_profile_result
 
     - name: Add a new variable to the vars/vars-output_vars file
