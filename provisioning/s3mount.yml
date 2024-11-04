@@ -4,7 +4,7 @@
   become: yes
   gather_facts: False
   vars:
-    mount_path: "/var/www/html/"
+    mount_path: "/var/www/html"
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
@@ -28,5 +28,6 @@
 
     - name: Give ownership to www-data
       ansible.builtin.shell: |
-        sudo chown -R www-data:www-data /path/to/mount
-        sudo chmod -R 755 /path/to/mount
+        sudo chown -R www-data:www-data "{{mount_path}}"
+        sudo chown -R www-data:www-data "{{mount_path}}"/*
+        sudo chmod -R 755 {{mount_path}}
