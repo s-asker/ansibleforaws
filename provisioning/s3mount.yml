@@ -9,6 +9,12 @@
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
+    - name: Give ownership to www-data
+      ansible.builtin.shell: |
+        sudo chown -R www-data:www-data {{mount_path}}
+        sudo chown -R www-data:www-data {{mount_path}}/*
+        sudo chmod -R 755 {{mount_path}}
+
     - name: Clear /var/www/html/ in worker nodes
       ansible.builtin.shell: rm -rf {{mount_path}}/*
 
@@ -20,11 +26,7 @@
         state: present
       become: true
 
-    - name: Give ownership to www-data
-      ansible.builtin.shell: |
-        sudo chown -R www-data:www-data {{mount_path}}
-        sudo chown -R www-data:www-data {{mount_path}}/*
-        sudo chmod -R 755 {{mount_path}}
+
 
     - name: Mount S3 bucket to /var/www/html using s3fs
       shell: |
