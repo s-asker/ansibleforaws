@@ -7,10 +7,29 @@
       ansible.builtin.include_vars:
         file: vars/vpc-output_vars
 
+
+    - name: Create IAM Role for EC2 with Policy Attached
+        amazon.aws.iam_role:
+          name: "EC2S3AccessRole"
+          assume_role_policy_document: >
+            {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "ec2.amazonaws.com"
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            }
+        register: role_result
+
     - name: Create IAM Policy
       amazon.aws.iam_policy:
         iam_type: role
-        iam_name: "EC2S3AccessPolicy"
+        iam_name: "EC2S3AccessRole"
         policy_name: "S3ACCESS"
         policy_json: >
           {
@@ -32,25 +51,6 @@
           }
       register: policy_result
 
-    - name: Create IAM Role for EC2 with Policy Attached
-      amazon.aws.iam_role:
-        name: "EC2S3AccessRole"
-        assume_role_policy_document: >
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "ec2.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
-              }
-            ]
-          }
-        managed_policies:
-          - "{{ policy_result.policy.arn }}"
-      register: role_result
 
     - name: Create Instance Profile
       amazon.aws.iam_instance_profile:
