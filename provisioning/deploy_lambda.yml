@@ -51,6 +51,8 @@
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
+        environment_variables:
+          S3_BUCKET_NAME: "{{ s3OUT }}"  # Set your bucket name here
       register: lambda_out
 
     - name: Create EventBridge rule for ASG instance launch
@@ -60,15 +62,15 @@
         state: present
         event_pattern: |
           {
-            "source": ["aws.autoscaling"],
-            "detail-type": ["EC2 Instance Launch Successful"],
+            "source": "aws.autoscaling",
+            "detail-type": "EC2 Instance Launch Successful",
             "detail": {
-              "AutoScalingGroupName": ["{{ asgOUT }}"]
+              "Description": "Launching a new EC2 instance"
             }
           }
         targets:
           - id: MyTargetLambda
-            arn: "{{{lambda_out.configuration.target_arn}}"
+            arn: "{{lambda_out.configuration.target_arn}}"
             input_transformer:
               input_paths_map:
                 instance: "$.detail.instance-id"
