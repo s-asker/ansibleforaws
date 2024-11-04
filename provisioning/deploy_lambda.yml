@@ -1,5 +1,5 @@
 ---
-- name: Deploy Lambda function for syncing ASG instances
+- name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
   tasks:
     - name: Import IDs
@@ -32,87 +32,56 @@
         policy_name: "AdministratorAccess"
         policy_json: "{{ lookup('template', 'templates/policy.json.j2') }}"
 
-    - name: Create IAM role for Autoscaling Lifecycle hook with administrative privileges
-      amazon.aws.iam_role:
-        name: LifeCycleRole
-        assume_role_policy_document: |
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "autoscaling.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
-              }
-            ]
-          }
-      register: lifecycle_role
-    - name: Attach AdministratorAccess policy to Autoscaling Lifecycle hook
-      community.aws.iam_policy:
-        iam_name: "{{ lifecycle_role.iam_role.role_name }}"
-        iam_type: role
-        state: present
-        policy_name: "SNS"
-        policy_json: "{{ lookup('template', 'templates/policy2.json.j2') }}"
     - name: Upload Lambda code to S3
       aws_s3:
-        bucket: "{{s3OUT}}"
+        bucket: "{{ s3OUT }}"
         object: lambda_function.zip
         src: ./lambda_function.zip
         mode: put
 
-
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{region}}"
+        region: "{{ region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
         handler: lambda_function.lambda_handler
-        s3_bucket: "{{ s3OUT }}"          # S3 bucket containing the Lambda code
-        s3_key: "lambda_function.zip"      # Key of the Lambda code in the bucket
+        s3_bucket: "{{ s3OUT }}"
+        s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
       register: lambda_out
 
-
-    - name: Create SNS topic for ASG triggers
-      community.aws.sns_topic:
-        region: "{{region}}"
-        name: "asg-launch-triggers"
+    - name: Create EventBridge rule for ASG instance launch
+      amazon.aws.cloudwatchevent_rule:
+        name: "asg-instance-launch"
+        description: "EventBridge rule for ASG instance launch to trigger Lambda function"
         state: present
-      register: sns_topic
+        event_pattern: |
+          {
+            "source": ["aws.autoscaling"],
+            "detail-type": ["EC2 Instance Launch Successful"],
+            "detail": {
+              "AutoScalingGroupName": ["{{ asgOUT }}"]
+            }
+          }
+        targets:
+          - id: MyTargetLambda
+            arn: "{{{lambda_out.configuration.target_arn}}"
+            input_transformer:
+              input_paths_map:
+                instance: "$.detail.instance-id"
+                state: "$.detail.state"
+              input_template: '{"InstanceId": "<instance>"}'
+        register: eventbridge_rule
 
-    - name: Create ASG lifecycle hook for instance launch
-      command: >
-        aws autoscaling put-lifecycle-hook
-        --region "{{region}}"
-        --lifecycle-hook-name "NewInstanceLaunch"
-        --auto-scaling-group-name "{{asgOUT}}"
-        --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
-        --notification-target-arn "{{ sns_topic.sns_arn }}"
-        --role-arn "{{ lifecycle_role.iam_role.arn }}"
-
-    - name: Grant permission to SNS to invoke Lambda function
+    - name: Grant EventBridge permission to invoke Lambda function
       command: >
         aws lambda add-permission
-        --region "{{region}}"
-        --function-name "{{lambda_out.configuration.function_name}}"
-        --principal sns.amazonaws.com
-        --statement-id sid
-        --action "lambda:InvokeFunction"
-        --source-arn "{{ sns_topic.sns_arn }}"
-
-    - name: Subscribe Lambda function to SNS topic
-      command: >
-        aws sns subscribe
-        --topic-arn "{{ sns_topic.sns_arn }}"
-        --protocol lambda
-        --notification-endpoint "{{ lambda_out.configuration.function_arn }}"
         --region "{{ region }}"
-
-
-
+        --function-name "{{ lambda_out.configuration.function_name }}"
+        --principal events.amazonaws.com
+        --statement-id "EventBridgeInvokePermission"
+        --action "lambda:InvokeFunction"
+        --source-arn "{{ eventbridge_rule.rule.arn }}"

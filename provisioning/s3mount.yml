@@ -25,3 +25,8 @@
         echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,iam_role=auto 0 0" >> /etc/fstab
         s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other
       become: true
+
+    - name: Give ownership to www-data
+      ansible.builtin.shell: |
+        sudo chown -R www-data:www-data /path/to/mount
+        sudo chmod -R 755 /path/to/mount
