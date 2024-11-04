@@ -9,7 +9,9 @@
 
     - name: Create IAM Policy
       amazon.aws.iam_policy:
-        name: "EC2S3AccessPolicy"
+        iam_type: role
+        iam_name: "EC2S3AccessPolicy"
+        policy_name: "S3ACCESS"
         policy_document: >
           {
             "Version": "2012-10-17",
