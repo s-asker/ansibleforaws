@@ -9,6 +9,10 @@
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
+    - name: Clear /var/www/html/ in worker nodes
+      ansible.builtin.shell: rm -rf {{mount_path}}/*
+
+
     - name: Install the package "s3fs-fuse"
       ansible.builtin.apt:
         name:
