@@ -59,7 +59,7 @@
       command: >
         aws lambda get-function
         --region "{{ region }}"
-        --function-name "{{lambda_function_arn.stdout.strip()}}"
+        --function-name "{{lambda_out.configuration.function_name}}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
@@ -80,7 +80,7 @@
           }
         targets:
           - id: MyTargetLambda
-            arn: "{{lambda_function_arn}}"
+            arn: "{{lambda_function_arn.stdout.strip()}}"
             input_transformer:
               input_paths_map:
                 instance: "$.detail.instance-id"
