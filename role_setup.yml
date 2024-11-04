@@ -30,7 +30,7 @@
           }
       register: policy_result
 
-    - name: Create IAM Role for EC2
+    - name: Create IAM Role for EC2 with Policy Attached
       amazon.aws.iam_role:
         name: "EC2S3AccessRole"
         assume_role_policy_document: >
@@ -46,14 +46,9 @@
               }
             ]
           }
+        managed_policies:
+          - "{{ policy_result.policy.arn }}"
       register: role_result
-
-    - name: Attach S3 Access Policy to the Role
-      amazon.aws.iam_policy_attachment:
-        name: "EC2S3AccessPolicyAttachment"
-        policy_arn: "{{ policy_result.policy.arn }}"
-        roles:
-          - "{{ role_result.role.name }}"
 
     - name: Create Instance Profile
       amazon.aws.iam_instance_profile:
@@ -65,5 +60,5 @@
     - name: Add a new variable to the vars/vars-output_vars file
       lineinfile:
         path: "vars/vpc-output_vars"
-        line: "instance_profile_arn: {{instance_profile_result.iam_instance_profile.arn}}"
+        line: "instance_profile_arn: {{ instance_profile_result.iam_instance_profile.arn }}"
         state: present
