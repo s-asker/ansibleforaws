@@ -55,6 +55,14 @@
           S3_BUCKET_NAME: "{{ s3OUT }}"  # Set your bucket name here
       register: lambda_out
 
+    - name: Get the Lambda function ARN without the version
+      command: >
+        aws lambda get-function
+        --function-name "{{lambda_out.configuration.function_name}}"
+        --query 'Configuration.FunctionArn'
+        --output text
+      register: lambda_function_arn
+
     - name: Create EventBridge rule for ASG instance launch
       amazon.aws.cloudwatchevent_rule:
         name: "asg-instance-launch"
@@ -71,7 +79,7 @@
           }
         targets:
           - id: MyTargetLambda
-            arn: "{{lambda_out.configuration.function_arn}}"
+            arn: "{{lambda_function_arn}}"
             input_transformer:
               input_paths_map:
                 instance: "$.detail.instance-id"
