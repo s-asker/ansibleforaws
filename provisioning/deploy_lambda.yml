@@ -76,7 +76,7 @@
                 instance: "$.detail.instance-id"
                 state: "$.detail.state"
               input_template: '{"InstanceId": "<instance>"}'
-        register: eventbridge_rule
+      register: eventbridge_rule
 
     - name: Grant EventBridge permission to invoke Lambda function
       command: >
