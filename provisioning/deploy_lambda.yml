@@ -60,6 +60,7 @@
         name: "asg-instance-launch"
         description: "EventBridge rule for ASG instance launch to trigger Lambda function"
         state: present
+        region: "{{region}}"
         event_pattern: |
           {
             "source": "aws.autoscaling",
