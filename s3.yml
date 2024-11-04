@@ -1,5 +1,5 @@
 ---
-- name: Setup Project Stack
+- name: Setup S3 bucket
   hosts: localhost
   connection: local
   gather_facts: no

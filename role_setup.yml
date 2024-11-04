@@ -1,8 +1,9 @@
-- hosts: localhost
-  gather_facts: False
+- name: Setup instance profile
+  hosts: localhost
+  connection: local
+  gather_facts: no
   tasks:
     - name: Import S3 Bucket name
-    - name: Create IAM Policy for S3 Access
       ansible.builtin.include_vars:
         file: vars/vpc-output_vars
 
