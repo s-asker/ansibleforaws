@@ -70,7 +70,7 @@
           }
         targets:
           - id: MyTargetLambda
-            arn: "{{lambda_out.configuration.target_arn}}"
+            arn: "{{lambda_out.configuration.function_arn}}"
             input_transformer:
               input_paths_map:
                 instance: "$.detail.instance-id"
