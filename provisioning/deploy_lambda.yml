@@ -59,7 +59,7 @@
       command: >
         aws lambda get-function
         --region "{{ region }}"
-        --function-name "{{lambda_out.configuration.function_name}}"
+        --function-name "{{lambda_function_arn.stdout.strip()}}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
