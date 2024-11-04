@@ -66,7 +66,7 @@
             "source": ["aws.autoscaling"],
             "detail-type": ["EC2 Instance Launch Successful"],
             "detail": {
-              "Description": "Launching a new EC2 instance"
+              "Description": ["Launching a new EC2 instance"]
             }
           }
         targets:
