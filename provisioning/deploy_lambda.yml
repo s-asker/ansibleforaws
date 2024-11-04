@@ -58,6 +58,7 @@
     - name: Get the Lambda function ARN without the version
       command: >
         aws lambda get-function
+        --region "{{ region }}"
         --function-name "{{lambda_out.configuration.function_name}}"
         --query 'Configuration.FunctionArn'
         --output text
