@@ -75,8 +75,7 @@
             input_transformer:
               input_paths_map:
                 instance: "$.detail.instance-id"
-                state: "$.detail.state"
-              input_template: '{"InstanceId": "<instance>"}'
+              input_template: '{"instance-id": "<instance>"}'
       register: eventbridge_rule
 
 
