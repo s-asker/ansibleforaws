@@ -79,6 +79,7 @@
               input_template: '{"InstanceId": "<instance>"}'
       register: eventbridge_rule
 
+
     - name: Grant EventBridge permission to invoke Lambda function
       command: >
         aws lambda add-permission
