@@ -12,7 +12,7 @@
         iam_type: role
         iam_name: "EC2S3AccessPolicy"
         policy_name: "S3ACCESS"
-        policy_document: >
+        policy_json: >
           {
             "Version": "2012-10-17",
             "Statement": [
