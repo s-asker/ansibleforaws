@@ -58,6 +58,7 @@
         region: "{{ region }}"
         key_name: sitekey
         instance_type: t2.micro
+        iam_instance_profile:
         image_id: "{{ nginx_ami }}"
         network_interfaces:
           - device_index: 0

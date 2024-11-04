@@ -60,8 +60,8 @@
         path: "/"
       register: instance_profile_result
 
-    - name: Add a new variable to the vars/lambda_setup file
+    - name: Add a new variable to the vars/vars-output_vars file
       lineinfile:
-        path: "vars/vpc_setup.yml"
+        path: "vars/vpc-output_vars"
         line: "instance_profile_arn: {{instance_profile_result.iam_instance_profile.arn}}"
         state: present
