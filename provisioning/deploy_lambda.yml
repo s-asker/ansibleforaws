@@ -4,7 +4,7 @@
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
-      
+
     - name: Create IAM role for Lambda with administrative privileges
       amazon.aws.iam_role:
         name: LambdaRole
@@ -96,6 +96,15 @@
         --notification-target-arn "{{ sns_topic.sns_arn }}"
         --role-arn "{{ lifecycle_role.iam_role.arn }}"
 
+    - name: Grant permission to SNS to invoke Lambda function
+      command: >
+        aws lambda add-permission
+        --region "{{region}}"
+        --function-name "{{lambda_out.configuration.function_name}}"
+        --principal sns.amazonaws.com
+        --statement-id sid
+        --action "lambda:InvokeFunction"
+        --source-arn "{{ sns_topic.sns_arn }}"
 
     - name: Subscribe Lambda function to SNS topic
       command: >
@@ -104,19 +113,6 @@
         --protocol lambda
         --notification-endpoint "{{ lambda_out.configuration.function_arn }}"
         --region "{{ region }}"
-          
-
-    - name: Grant permission to SNS to invoke Lambda function
-      command: >
-        aws lambda add-permission
-        --region "{{region}}"
-        --function-name "{{lambda_out.configuration.function_name}}"
-        --principal sns.amazonaws.com
-        --statement-id my-sns-invocation
-        --action "lambda:InvokeFunction"
-        --source-arn "{{ sns_topic.sns_arn }}"
-
-    
 
 
 
