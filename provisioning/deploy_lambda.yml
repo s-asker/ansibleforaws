@@ -87,7 +87,7 @@
     - name: Subscribe Lambda function to SNS topic
       command: >
         aws sns subscribe
-        --topic-arn "{{ sns_topic.sns_arn }}"
+        --topic-arn "{{ SNS_out.sns_arn }}"
         --protocol lambda
         --notification-endpoint "{{ lambda_function_arn }}"
         --region "{{ region }}"
