@@ -13,7 +13,7 @@
       register: asg_info
 
     - debug:
-        var: "{{asg_info}}"
+        var: asg_info
 
     - name: Basic AMI Creation
       amazon.aws.ec2_ami:
