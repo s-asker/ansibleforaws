@@ -80,6 +80,13 @@
           - autoscaling:EC2_INSTANCE_LAUNCH
       register: asg_notification_update
 
+    - name: Subscribe Lambda function to SNS topic
+      command: >
+        aws sns subscribe
+        --topic-arn "{{ sns_topic.sns_arn }}"
+        --protocol lambda
+        --notification-endpoint "{{ lambda_function_arn }}"
+        --region "{{ region }}"
 
     - name: Grant SNS permission to invoke Lambda function
       command: >
@@ -90,3 +97,4 @@
         --statement-id "SNSInvokePermission"
         --action "lambda:InvokeFunction"
         --source-arn "{{ SNS_out.sns_arn }}"
+
