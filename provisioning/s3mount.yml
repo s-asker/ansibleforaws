@@ -24,7 +24,7 @@
 
     - name: Mount S3 bucket to /var/www/html using s3fs with proper permissions
       shell: |
-        echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,uid=www-data,gid=www-data,umask=0022,use_cache=/tmp 0 0" >> /etc/fstab
-        s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other,uid=www-data,gid=www-data,umask=0022,use_cache=/tmp
+        echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,uid=33,gid=33,umask=0022,use_cache=/tmp 0 0" >> /etc/fstab
+        s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other,uid=33,gid=33,umask=0022,use_cache=/tmp
       become: true
 
