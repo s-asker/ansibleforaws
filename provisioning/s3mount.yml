@@ -9,7 +9,7 @@
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
-    - name: Clear /var/www/html/ in wossrker nodes
+    - name: Clear /var/www/html/ in worker nodes
       ansible.builtin.shell: sudo rm -rf {{mount_path}}/*
       become: true
       ignore_errors: yes
