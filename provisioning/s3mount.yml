@@ -10,7 +10,7 @@
       include_vars: ../vars/vpc-output_vars
 
     - name: Clear /var/www/html/ in wossrker nodes
-      ansible.builtin.shell: rm -rf {{mount_path}}/*
+      ansible.builtin.shell: sudo rm -rf {{mount_path}}/*
       become: true
 
     - name: Install the package "s3fs-fuse"
