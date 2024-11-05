@@ -65,7 +65,7 @@
       register: lambda_function_arn
 
     - debug:
-        var: "{{lambda_function_arn.strip()}}"
+        var: "{{lambda_function_arn.stdout.strip()}}"
 
     - name: Create alarm SNS topic
       community.aws.sns_topic:
@@ -89,14 +89,14 @@
         aws sns subscribe
         --topic-arn "{{ SNS_out.sns_arn }}"
         --protocol lambda
-        --notification-endpoint "{{ lambda_function_arn.strip() }}"
+        --notification-endpoint "{{ lambda_function_arn.stdout.strip() }}"
         --region "{{ region }}"
 
     - name: Grant SNS permission to invoke Lambda function
       command: >
         aws lambda add-permission
         --region "{{ region }}"
-        --function-name "{{ lambda_function_arn.strip() }}"
+        --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
         --statement-id "SNSInvokePermission"
         --action "lambda:InvokeFunction"
