@@ -4,12 +4,12 @@
   become: yes
   gather_facts: False
   vars:
-    mount_path: "/var/www/html/"
+    mount_path: "/var/www/html"
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
-    - name: Clear /var/www/html/ in worker nodes
+    - name: Clear /var/www/html/ in wossrker nodes
       ansible.builtin.shell: rm -rf {{mount_path}}/*
 
 
