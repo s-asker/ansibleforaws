@@ -7,7 +7,7 @@ ec2 = boto3.client('ec2')
 ssm = boto3.client('ssm')
 
 def lambda_handler(event, context):
-    instance_id = event['detail']['EC2InstanceId']
+    instance_id = event['EC2InstanceId']
     bucket_name = os.environ['S3_BUCKET_NAME']  # Get bucket name from environment variable
     print(f"Scaling event detected: Instance {instance_id}")
 
