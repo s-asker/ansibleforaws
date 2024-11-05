@@ -119,8 +119,8 @@
         target_group_arns:
           - "{{ webtargetgroup.target_group_arn }}"
         health_check_type: EC2  # Faster EC2 health checks
-        health_check_period: 180
-        wait_for_instances: true
+        health_check_period: 300
+        wait_for_instances: false
       register: asg_out
 
     - debug:
