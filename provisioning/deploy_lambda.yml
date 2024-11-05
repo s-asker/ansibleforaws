@@ -86,15 +86,6 @@
         state: present
       register: sns_topic
 
-    - name: Create ASG lifecycle hook for instance launch
-      command: >
-        aws autoscaling put-lifecycle-hook
-        --region "{{region}}"
-        --lifecycle-hook-name "NewInstanceLaunch"
-        --auto-scaling-group-name "{{asgOUT}}"
-        --lifecycle-transition "autoscaling:EC2_INSTANCE_LAUNCHING"
-        --notification-target-arn "{{ sns_topic.sns_arn }}"
-        --role-arn "{{ lifecycle_role.iam_role.arn }}"
 
     - name: Grant permission to SNS to invoke Lambda function
       command: >
