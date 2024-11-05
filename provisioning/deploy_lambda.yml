@@ -1,5 +1,5 @@
 ---
-- name: Deploy Lambda function for syncing ASG instances
+- name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
   tasks:
     - name: Import IDs
@@ -32,78 +32,61 @@
         policy_name: "AdministratorAccess"
         policy_json: "{{ lookup('template', 'templates/policy.json.j2') }}"
 
-    - name: Create IAM role for Autoscaling Lifecycle hook with administrative privileges
-      amazon.aws.iam_role:
-        name: LifeCycleRole
-        assume_role_policy_document: |
-          {
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Principal": {
-                  "Service": "autoscaling.amazonaws.com"
-                },
-                "Action": "sts:AssumeRole"
-              }
-            ]
-          }
-      register: lifecycle_role
-    - name: Attach AdministratorAccess policy to Autoscaling Lifecycle hook
-      community.aws.iam_policy:
-        iam_name: "{{ lifecycle_role.iam_role.role_name }}"
-        iam_type: role
-        state: present
-        policy_name: "SNS"
-        policy_json: "{{ lookup('template', 'templates/policy2.json.j2') }}"
     - name: Upload Lambda code to S3
       aws_s3:
-        bucket: "{{s3OUT}}"
+        bucket: "{{ s3OUT }}"
         object: lambda_function.zip
         src: ./lambda_function.zip
         mode: put
 
-
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{region}}"
+        region: "{{ region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
         handler: lambda_function.lambda_handler
-        s3_bucket: "{{ s3OUT }}"          # S3 bucket containing the Lambda code
-        s3_key: "lambda_function.zip"      # Key of the Lambda code in the bucket
+        s3_bucket: "{{ s3OUT }}"
+        s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
+        environment_variables:
+          S3_BUCKET_NAME: "{{ s3OUT }}"  # Set your bucket name here
       register: lambda_out
 
+    - name: Get the Lambda function ARN without the version
+      command: >
+        aws lambda get-function
+        --region "{{ region }}"
+        --function-name "{{lambda_out.configuration.function_name}}"
+        --query 'Configuration.FunctionArn'
+        --output text
+      register: lambda_function_arn
 
-    - name: Create SNS topic for ASG triggers
+    - name: Create alarm SNS topic
       community.aws.sns_topic:
-        region: "{{region}}"
-        name: "asg-launch-triggers"
+        name: "LambdaSNS"
         state: present
-      register: sns_topic
+      register: SNS_out
 
 
-    - name: Grant permission to SNS to invoke Lambda function
+    - name: Update Auto Scaling Group to add notifications
+      community.aws.ec2_asg:
+        name: "{{asgOUT}}"
+        region: "{{ region }}"
+        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
+        notification_types:
+          - autoscaling:EC2_INSTANCE_LAUNCH
+      register: asg_notification_update
+
+
+    - name: Grant SNS permission to invoke Lambda function
       command: >
         aws lambda add-permission
-        --region "{{region}}"
-        --function-name "{{lambda_out.configuration.function_name}}"
-        --principal sns.amazonaws.com
-        --statement-id sid
-        --action "lambda:InvokeFunction"
-        --source-arn "{{ sns_topic.sns_arn }}"
-
-    - name: Subscribe Lambda function to SNS topic
-      command: >
-        aws sns subscribe
-        --topic-arn "{{ sns_topic.sns_arn }}"
-        --protocol lambda
-        --notification-endpoint "{{ lambda_out.configuration.function_arn }}"
         --region "{{ region }}"
-
-
-
+        --function-name "{{ lambda_function_arn }}"
+        --principal sns.amazonaws.com
+        --statement-id "SNSInvokePermission"
+        --action "lambda:InvokeFunction"
+        --source-arn "{{ SNS_out.sns_arn }}"

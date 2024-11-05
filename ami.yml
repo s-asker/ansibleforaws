@@ -1,0 +1,28 @@
+---
+- name: AMI and Launch Template Update
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Import ASG name and region
+      include_vars: vars/vpc-output_vars
+
+    - name: Retrieve details of the Auto Scaling Group
+      amazon.aws.ec2_asg_info:
+        name: "{{asgOUT}}"  # Replace with your ASG name
+        region: "{{ region }}"
+      register: asg_info
+
+    - name: Basic AMI Creation
+      amazon.aws.ec2_ami:
+        instance_id: "{{asg_info.results.instances[0].instance_id}}"
+        wait: true
+        name: webAMI
+        tags:
+          Name: webAMI
+      register: webAMI_out
+
+    - name: Modify the web launch template
+      community.aws.ec2_launch_template:
+        name: "{{asg_info.results.instances[0].launch_template.launch_template_name}}"
+        image_id: "{{webAMI_out.image_id}}"
+
