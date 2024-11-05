@@ -12,6 +12,9 @@
         region: "{{ region }}"
       register: asg_info
 
+    - debug:
+        var: "{{asg_info}}"
+
     - name: Basic AMI Creation
       amazon.aws.ec2_ami:
         instance_id: "{{asg_info.results.instances[0][instance_id]}}"
