@@ -24,7 +24,6 @@
         tags:
           Name: webAMI
       register: webAMI_out
-      when: asg_info.changed
 
     - name: Modify the web launch template
       community.aws.ec2_launch_template:
