@@ -27,7 +27,7 @@
 
     - name: Modify the web launch template
       community.aws.ec2_launch_template:
-        name: "{{asg_info.results.instances[0].launch_template.launch_template_name}}"
+        name: "{{asg_info.results[0].instances[0].launch_template.launch_template_name}}"
         region: "{{region}}"
         image_id: "{{webAMI_out.image_id}}"
 
