@@ -1,7 +1,7 @@
 ---
 - name: s3 mounting play
   hosts: websrvgrp
-  become: yes
+  become: true
   gather_facts: False
   vars:
     mount_path: "/var/www/html"
@@ -11,7 +11,7 @@
 
     - name: Clear /var/www/html/ in wossrker nodes
       ansible.builtin.shell: rm -rf {{mount_path}}/*
-
+      become: true
 
     - name: Install the package "s3fs-fuse"
       ansible.builtin.apt:
