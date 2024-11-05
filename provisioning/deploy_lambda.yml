@@ -64,10 +64,14 @@
         --output text
       register: lambda_function_arn
 
+    - debug:
+        var: "{{lambda_function_arn}}"
+
     - name: Create alarm SNS topic
       community.aws.sns_topic:
         name: "LambdaSNS"
         state: present
+        region: "{{region}}"
       register: SNS_out
 
 
