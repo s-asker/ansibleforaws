@@ -4,3 +4,4 @@
 - import_playbook: apache_install.yml
 - import_playbook: node_exporter_install.yml
 - import_playbook: prometheus.yml
+- import_playbook: s3mount.yml
