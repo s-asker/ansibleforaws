@@ -19,7 +19,7 @@
 
     - name: Create alarm SNS topic
       community.aws.sns_topic:
-        name: "LambdaSNS"
+        name: "JenkinsSNS"
         state: present
         region: "{{region}}"
         subscriptions:
