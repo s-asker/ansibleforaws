@@ -30,6 +30,9 @@
             protocol: "http"
       register: SNS_out
 
+    - name: Accept connection
+      ansible.builtin.command: "aws sns confirm-subscription --topic-arn {{ SNS_out.sns_arn }} --token {{token}}"
+
     - name: Update Auto Scaling Group to add notifications
       community.aws.ec2_asg:
         name: "{{asgOUT}}"
@@ -41,6 +44,5 @@
       register: asg_notification_update
       when: SNS_out.changed
 
-    - name: Accept connection
-      ansible.builtin.command: "aws sns confirm-subscription --topic-arn {{ SNS_out.sns_arn }} --token {{token}}"
+
 
