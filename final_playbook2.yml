@@ -1,0 +1,8 @@
+---
+- import_playbook: provisioning/s3.yml
+- import_playbook: provisioning/stress_install.yml
+- import_playbook: provisioning/apache_install.yml
+- import_playbook: provisioning/node_exporter_install.yml
+- import_playbook: provisioning/prometheus.yml
+- import_playbook: provisioning/s3mount.yml
+- import_playbook: ami.yml

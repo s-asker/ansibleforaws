@@ -1,0 +1,5 @@
+---
+- import_playbook: vpc.yml
+- import_playbook: s3.yml
+- import_playbook: role_setup.yml
+- import_playbook: ec2-stack.yml

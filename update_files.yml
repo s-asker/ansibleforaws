@@ -1,0 +1,70 @@
+---
+- name: Update hosts, inventory and prometheus config
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Import IDs
+      include_vars: ../vars/vpc-output_vars
+    - name: Retrieve ASG information
+      amazon.aws.autoscaling_info:
+        names:
+          - "{{ asgOUT }}"  # Replace with your ASG name or variable
+        region: "{{ region }}"  # Replace with your desired AWS region
+      register: asg_info
+
+    - name: Gather detailed information about ASG instances
+      amazon.aws.ec2_instance_info:
+        instance_ids: "{{ instance_ids }}"
+        region: "{{ region }}"
+      register: ec2_info
+
+    - name: Insert Private IPs of ASG Instances to a File
+      blockinfile:
+        path: "provisioning/group_vars/hostsip"
+        block: |
+          {% for result in ec2_info.results %}
+          web{{ loop.index }}: {{ result.instances[0].private_ip_address }}
+          {% endfor %}
+
+    - name: Create Dynamic Inventory
+      blockinfile:
+        path: "provisioning/inventory"
+        block: |
+          {% for result in ec2_info.results %}
+          web{{ loop.index }} ansible_host={{ result.instances[0].private_ip_address }}
+          {% endfor %}
+          cntl ansible_host=127.0.0.1 ansible_connection=local
+
+          [websrvgrp]
+          {% for result in ec2_info.results %}
+          web{{ loop.index }}
+          {% endfor %}
+
+          [control]
+          cntl
+
+          [stack_inst:children]
+          websrvgrp
+
+          [stack_inst:vars]
+          ansible_user=ubuntu
+          ansible_ssh_private_key_file=site_loginkey.pem
+          
+
+    - name: Backup the existing prometheus.yml
+      ansible.builtin.copy:
+        src: /etc/prometheus/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml.bak
+        remote_src: yes
+
+    - name: Generate list of node exporters from inventory
+      ansible.builtin.template:
+        src: provisioning/templates/prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+
+    - name: Restart Prometheus service
+      ansible.builtin.systemd:
+        name: prometheus
+        state: restarted
