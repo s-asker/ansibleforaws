@@ -1,6 +1,9 @@
 ---
 - name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
+  vars:
+    token: 12932
+  gather_facts: no
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
@@ -23,10 +26,9 @@
         state: present
         region: "{{region}}"
         subscriptions:
-          - endpoint: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke?token=12932"
+          - endpoint: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke?token={{token}}"
             protocol: "http"
       register: SNS_out
-
 
     - name: Update Auto Scaling Group to add notifications
       community.aws.ec2_asg:
@@ -38,4 +40,7 @@
           - autoscaling:EC2_INSTANCE_TERMINATE
       register: asg_notification_update
       when: SNS_out.changed
+
+    - name: Accept connection
+      ansible.builtin.command: "aws sns confirm-subscription --topic-arn {{ SNS_out.sns_arn }} --token {{token}}"
 
