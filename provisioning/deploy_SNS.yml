@@ -30,6 +30,9 @@
             protocol: "http"
       register: SNS_out
 
+    - debug:
+        var: SNS_out
+
     - name: Accept connection
       ansible.builtin.command: "aws sns confirm-subscription --region {{region}} --topic-arn {{ SNS_out.sns_arn }} --token {{token}}"
 
