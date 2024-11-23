@@ -1,0 +1,38 @@
+---
+- name: Deploy Lambda function for syncing ASG instances using EventBridge
+  hosts: localhost
+  tasks:
+    - name: Import IDs
+      include_vars: ../vars/vpc-output_vars
+
+
+    - name: Get public IP of the current machine
+      ansible.builtin.command: "curl -s http://169.254.169.254/latest/meta-data/public-ipv4"
+      register: machine_ip
+      when: ansible_virtualization_type == "kvm" or ansible_virtualization_type == "hvm"
+
+    - debug:
+        var: machine_ip
+
+    - name: Create alarm SNS topic
+      community.aws.sns_topic:
+        name: "LambdaSNS"
+        state: present
+        region: "{{region}}"
+        subscriptions:
+          - endpoint: "my_email_address@example.com"
+            protocol: "http"
+      register: SNS_out
+
+
+    - name: Update Auto Scaling Group to add notifications
+      community.aws.ec2_asg:
+        name: "{{asgOUT}}"
+        region: "{{ region }}"
+        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
+        notification_types:
+          - autoscaling:EC2_INSTANCE_LAUNCH
+          - autoscaling:EC2_INSTANCE_TERMINATE
+      register: asg_notification_update
+
+
