@@ -9,7 +9,6 @@
     - name: Get public IP of the current machine
       ansible.builtin.command: "curl -s http://169.254.169.254/latest/meta-data/public-ipv4"
       register: machine_ip
-      when: ansible_virtualization_type == "kvm" or ansible_virtualization_type == "hvm"
 
     - debug:
         var: machine_ip
