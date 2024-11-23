@@ -26,7 +26,6 @@
           - endpoint: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke?token=12932"
             protocol: "http"
       register: SNS_out
-      when: ansible_machine_ip.changed
 
 
     - name: Update Auto Scaling Group to add notifications
