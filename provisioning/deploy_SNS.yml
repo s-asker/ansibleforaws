@@ -6,12 +6,16 @@
       include_vars: ../vars/vpc-output_vars
 
 
-    - name: Get public IP of the current machine
-      ansible.builtin.command: "curl -s http://169.254.169.254/latest/meta-data/public-ipv4"
-      register: machine_ip
+    - name: Get the token for metadata access (on the local machine)
+      ansible.builtin.shell: |
+        TOKEN=$(curl -s -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 300" http://169.254.169.254/latest/api/token)
+        PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
+        echo "$PUBLIC_IP"
+      register: ansible_machine_ip
+      changed_when: false
 
     - debug:
-        var: machine_ip
+        var: ansible_machine_ip.stdout
 
     - name: Create alarm SNS topic
       community.aws.sns_topic:
@@ -19,7 +23,7 @@
         state: present
         region: "{{region}}"
         subscriptions:
-          - endpoint: "my_email_address@example.com"
+          - endpoint: "http://{{ ansible_machine_ip.stdout }}/generic-webhook-trigger/invoke?token=12932"
             protocol: "http"
       register: SNS_out
 
