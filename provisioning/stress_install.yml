@@ -2,7 +2,7 @@
 - name: Install stress package on machines
   hosts: websrvgrp
   become: yes
-  gather_facts: yes
+  gather_facts: no
   tasks:
     - name: Update APT package index
       ansible.builtin.apt:
