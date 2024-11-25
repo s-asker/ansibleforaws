@@ -1,4 +1,3 @@
----
 - name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
   ignore_errors: true
@@ -64,51 +63,51 @@
 
     - name: Upload Lambda code to S3
       aws_s3:
-        bucket: "{{ s3_bucket_name }}"
+        bucket: "{{ s3OUT }}"
         object: lambda_function.zip
         src: "{{ lambda_zip_path }}"
         mode: put
 
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{ aws_region }}"
+        region: "{{ region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
-        handler: lambda_function.lambda_handler  # Ensure this points to your handler in lambda_function.py
+        handler: lambda_code.lambda_function.lambda_handler
         s3_bucket: "{{ s3OUT }}"
         s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
         environment_variables:
-          S3_BUCKET_NAME: "{{ s3_bucket_name }}"
+          S3_BUCKET_NAME: "{{ s3OUT }}"
       register: lambda_out
 
     - name: Get the Lambda function ARN without the version
       command: >
         aws lambda get-function
-        --region "{{ aws_region }}"
-        --function-name "{{ lambda_out.configuration.function_name }}"
+        --region "{{ region }}"
+        --function-name "{{lambda_out.configuration.function_name}}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
 
     - debug:
-        var: "{{ lambda_function_arn.stdout.strip() }}"
+        var: "{{lambda_function_arn.stdout.strip()}}"
 
     - name: Create alarm SNS topic
       community.aws.sns_topic:
         name: "LambdaSNS"
         state: present
-        region: "{{ aws_region }}"
+        region: "{{region}}"
       register: SNS_out
 
     - name: Update Auto Scaling Group to add notifications
       community.aws.ec2_asg:
-        name: "{{ asgOUT }}"
-        region: "{{ aws_region }}"
-        notification_topic: "{{ SNS_out.sns_arn }}"
+        name: "{{asgOUT}}"
+        region: "{{ region }}"
+        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
         notification_types:
           - autoscaling:EC2_INSTANCE_LAUNCH
       register: asg_notification_update
@@ -119,12 +118,12 @@
         --topic-arn "{{ SNS_out.sns_arn }}"
         --protocol lambda
         --notification-endpoint "{{ lambda_function_arn.stdout.strip() }}"
-        --region "{{ aws_region }}"
+        --region "{{ region }}"
 
     - name: Grant SNS permission to invoke Lambda function
       command: >
         aws lambda add-permission
-        --region "{{ aws_region }}"
+        --region "{{ region }}"
         --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
         --statement-id "SNSInvokePermission"
