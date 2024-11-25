@@ -9,12 +9,12 @@ app = Flask(__name__)
 def sns_listener():
     # Extract the SNS message from the request
     sns_message = request.json  # Get JSON from the body of the request
-
+    print(sns_message)
     if sns_message.get('Type') == 'SubscriptionConfirmation':
         # Extract the TopicArn and Token from the SNS message
         topic_arn = sns_message.get('TopicArn')
         token = sns_message.get('Token')
-
+        print ("x")
         # Send a request to confirm the subscription
         confirm_url = f"http://sns.us-east-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn={topic_arn}&Token={token}"
         response = requests.get(confirm_url)
