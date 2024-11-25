@@ -7,7 +7,7 @@
     lambda_execution_role: "arn:aws:iam::123456789012:role/lambda-execution-role"
     s3_bucket_name: "{{ s3OUT }}"
     lambda_zip_path: "/tmp/lambda_function.zip"
-    lambda_code_path: "/tmp/lambda_code"
+    lambda_code_path: "/tmp/lambda_function"
 
   tasks:
     - name: Import IDs
