@@ -1,6 +1,5 @@
 - name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
-  ignore_errors: true
   vars:
     token: "12932"
     aws_region: "us-west-2"
@@ -138,6 +137,6 @@
         --region "{{ region }}"
         --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
-        --statement-id "SNSInvokePermission"
+        --statement-id "SNSInvokePermissions"
         --action "lambda:InvokeFunction"
         --source-arn "{{ SNS_out.sns_arn }}"
