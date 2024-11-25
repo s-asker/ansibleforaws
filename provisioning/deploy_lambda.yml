@@ -48,16 +48,26 @@
         jenkins_base_url: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke"
         jenkins_token: "{{ token }}"
 
+    - name: Ensure the lambda_code_dir exists
+      ansible.builtin.file:
+        path: "{{ lambda_code_dir }}"
+        state: directory
+
     - name: Install Python dependencies into the lambda_code_dir
-      pip:
-        requirements: /templates/requirements.txt  # Replace with the actual path to your requirements.txt
-        dest: "{{ lambda_code_dir }}"
-        state: present
+      shell: |
+        pip install -r /path/to/requirements.txt -t {{ lambda_code_dir }}
+      args:
+        chdir: "{{ lambda_code_dir }}"
 
     - name: Create a zip archive of the Lambda code
       community.general.archive:
         path: "{{ lambda_code_dir }}"
         format: zip
+        dest: "{{ lambda_zip_path }}"
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: "{{ lambda_zip_path }}"
         dest: "{{ lambda_zip_path }}"
 
     - name: Attach AdministratorAccess policy to Lambda role
