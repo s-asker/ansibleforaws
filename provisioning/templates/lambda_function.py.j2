@@ -11,8 +11,6 @@ def lambda_handler(event, context):
         # Log the incoming SNS event
         print(f"Received event: {json.dumps(event)}")
 
-        # URL encode the SNS message to safely include it in the query string
-        encoded_message = urllib.parse.quote(sns_message)
 
         # Construct the Jenkins URL with query parameters
         jenkins_url = f"{jenkins_base_url}?token={token}"
