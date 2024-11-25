@@ -26,7 +26,7 @@
         state: present
         region: "{{region}}"
         subscriptions:
-          - endpoint: "http://{{ ansible_machine_ip.stdout }}:5000/call-jenkins"
+          - endpoint: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke?token=12932"
             protocol: "http"
       register: SNS_out
 
