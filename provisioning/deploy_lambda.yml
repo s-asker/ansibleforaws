@@ -1,89 +1,131 @@
----
 - name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
+  ignore_errors: true
   vars:
     token: "12932"
     aws_region: "us-west-2"
     lambda_execution_role: "arn:aws:iam::123456789012:role/lambda-execution-role"
-    lambda_code_dir: "/tmp/lambda_code"  # Directory where Lambda code and dependencies will reside
-    lambda_function_file: "lambda_function.py"  # Your Lambda function file name
-    dependencies_dir: "dependencies"  # Directory for dependencies
+    s3_bucket_name: "{{ s3OUT }}"
+    lambda_zip_path: "/tmp/lambda_function.zip"
+    lambda_code_path: "/tmp/lambda_code"
 
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
-    - name: Create directory for Lambda code and dependencies
-      ansible.builtin.file:
-        path: "{{ lambda_code_dir }}"
-        state: directory
+    - name: Create IAM role for Lambda with administrative privileges
+      amazon.aws.iam_role:
+        name: LambdaRole
+        assume_role_policy_document: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }
+        description: "Role for Lambda with administrative privileges"
+      register: lambda_role
 
-    - name: Create a directory for Python dependencies
-      ansible.builtin.file:
-        path: "{{ lambda_code_dir }}/{{ dependencies_dir }}"
-        state: directory
-
-    - name: Create a virtual environment for dependencies
+    - name: Get the token for metadata access (on the local machine)
       ansible.builtin.shell: |
-        python3 -m venv {{ lambda_code_dir }}/{{ dependencies_dir }}/venv
-      args:
-        creates: "{{ lambda_code_dir }}/{{ dependencies_dir }}/venv"
+        TOKEN=$(curl -s -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 300" http://169.254.169.254/latest/api/token)
+        PUBLIC_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
+        echo "$PUBLIC_IP"
+      register: ansible_machine_ip
+      changed_when: false
 
-    - name: Install Python dependencies into the virtual environment
+    - name: Render Lambda function template with variables
+      template:
+        src: templates/lambda_function.py.j2
+        dest: "{{ lambda_code_path }}/lambda_function.py"
+      vars:
+        jenkins_base_url: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke"
+        jenkins_token: "{{ token }}"
+
+    - name: Install Python dependencies for Lambda
       pip:
         name:
-          - requests  # Add other dependencies here if needed
-        virtualenv: "{{ lambda_code_dir }}/{{ dependencies_dir }}/venv"
+          - requests
+          # Add any other dependencies here
+        extra_args: "-t {{ lambda_code_path }}"  # Install dependencies into the lambda_code_path directory
 
-    - name: Copy lambda_function.py to the Lambda code directory
-      ansible.builtin.copy:
-        src: "{{ lambda_function_file }}"
-        dest: "{{ lambda_code_dir }}/{{ lambda_function_file }}"
-
-    - name: Copy the virtual environment site-packages to the Lambda code directory
-      ansible.builtin.command:
-        cmd: |
-          cp -r {{ lambda_code_dir }}/{{ dependencies_dir }}/venv/lib/python*/site-packages/* {{ lambda_code_dir }}/{{ dependencies_dir }}
-        creates: "{{ lambda_code_dir }}/{{ dependencies_dir }}/site-packages-copied"
-
-    - name: Create a zip archive of the Lambda function and dependencies
+    - name: Create a zip archive of Lambda code with dependencies
       community.general.archive:
-        path: "{{ lambda_code_dir }}"
+        path: "{{ lambda_code_path }}"
         format: zip
-        dest: "/tmp/lambda_function.zip"  # Final zip file path for deployment
+        dest: "{{ lambda_zip_path }}"
 
     - name: Upload Lambda code to S3
       aws_s3:
-        bucket: "{{ s3OUT }}"  # Specify the S3 bucket name
+        bucket: "{{ s3OUT }}"
         object: lambda_function.zip
-        src: /tmp/lambda_function.zip
+        src: "{{ lambda_zip_path }}"
         mode: put
 
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{ aws_region }}"
+        region: "{{ region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
-        handler: lambda_function.lambda_handler  # This should match the file and function inside your lambda_function.py
+        handler: lambda_code.lambda_function.lambda_handler
         s3_bucket: "{{ s3OUT }}"
         s3_key: "lambda_function.zip"
-        role: "{{ lambda_execution_role }}"
+        role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
         environment_variables:
-          S3_BUCKET_NAME: "{{ s3OUT }}"  # Set your bucket name here
+          S3_BUCKET_NAME: "{{ s3OUT }}"
       register: lambda_out
 
     - name: Get the Lambda function ARN without the version
       command: >
         aws lambda get-function
-        --region "{{ aws_region }}"
-        --function-name "{{ lambda_out.configuration.function_name }}"
+        --region "{{ region }}"
+        --function-name "{{lambda_out.configuration.function_name}}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
 
     - debug:
-        var: "{{ lambda_function_arn.stdout.strip() }}"
+        var: "{{lambda_function_arn.stdout.strip()}}"
 
+    - name: Create alarm SNS topic
+      community.aws.sns_topic:
+        name: "LambdaSNS"
+        state: present
+        region: "{{region}}"
+      register: SNS_out
+
+    - name: Update Auto Scaling Group to add notifications
+      community.aws.ec2_asg:
+        name: "{{asgOUT}}"
+        region: "{{ region }}"
+        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
+        notification_types:
+          - autoscaling:EC2_INSTANCE_LAUNCH
+      register: asg_notification_update
+
+    - name: Subscribe Lambda function to SNS topic
+      command: >
+        aws sns subscribe
+        --topic-arn "{{ SNS_out.sns_arn }}"
+        --protocol lambda
+        --notification-endpoint "{{ lambda_function_arn.stdout.strip() }}"
+        --region "{{ region }}"
+
+    - name: Grant SNS permission to invoke Lambda function
+      command: >
+        aws lambda add-permission
+        --region "{{ region }}"
+        --function-name "{{ lambda_function_arn.stdout.strip() }}"
+        --principal sns.amazonaws.com
+        --statement-id "SNSInvokePermission"
+        --action "lambda:InvokeFunction"
+        --source-arn "{{ SNS_out.sns_arn }}"
