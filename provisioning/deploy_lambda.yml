@@ -40,6 +40,17 @@
       register: ansible_machine_ip
       changed_when: false
 
+    - name: Ensure the zip utility is installed
+      package:
+        name: zip
+        state: present
+
+    - name: Create directory for Lambda code
+      file:
+        path: "{{ lambda_code_path }}"
+        state: directory
+        mode: '0755'
+
     - name: Render Lambda function template with variables
       template:
         src: templates/lambda_function.py.j2
@@ -56,10 +67,11 @@
         extra_args: "-t {{ lambda_code_path }}"  # Install dependencies into the lambda_code_path directory
 
     - name: Create a zip archive of Lambda code with dependencies
-      community.general.archive:
-        path: "{{ lambda_code_path }}"
-        format: zip
-        dest: "{{ lambda_zip_path }}"
+      command: >
+        zip -r "{{ lambda_zip_path }}" .
+      args:
+        chdir: "{{ lambda_code_path }}"  # Ensure the zip command is run in the correct directory
+
 
     - name: Upload Lambda code to S3
       aws_s3:
