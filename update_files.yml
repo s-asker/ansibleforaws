@@ -3,20 +3,21 @@
   hosts: localhost
   connection: local
   gather_facts: no
+  become: true
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
-    - name: Retrieve ASG information
-      amazon.aws.autoscaling_info:
-        names:
-          - "{{ asgOUT }}"  # Replace with your ASG name or variable
-        region: "{{ region }}"  # Replace with your desired AWS region
-      register: asg_info
-
-    - name: Gather detailed information about ASG instances
-      amazon.aws.ec2_instance_info:
-        instance_ids: "{{ instance_ids }}"
+    - name: Retrieve details of the Auto Scaling Group
+      amazon.aws.autoscaling_group_info:
+        name: "{{asgOUT}}"  # Replace with your ASG name
         region: "{{ region }}"
+      register: asg_out
+
+    - name: Gather information about ASG instances
+      amazon.aws.ec2_instance_info:
+        instance_ids: "{{ item.instance_id }}"
+        region: "{{ region }}"
+      loop: "{{ asg_out.results | map(attribute='instances') | flatten }}"
       register: ec2_info
 
     - name: Insert Private IPs of ASG Instances to a File
@@ -55,7 +56,6 @@
       ansible.builtin.copy:
         src: /etc/prometheus/prometheus.yml
         dest: /etc/prometheus/prometheus.yml.bak
-        remote_src: yes
 
     - name: Generate list of node exporters from inventory
       ansible.builtin.template:

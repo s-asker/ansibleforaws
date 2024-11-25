@@ -30,4 +30,16 @@
         name: "{{asg_info.results[0].instances[0].launch_template.launch_template_name}}"
         region: "{{region}}"
         image_id: "{{webAMI_out.image_id}}"
+      register: modified_LT
+
+    - debug:
+        var: modified_LT
+    - name: Modify Auto Scaling Group
+      community.aws.ec2_asg:
+        name: "{{ asgOUT }}"
+        region: "{{ region }}"
+        launch_template:
+          launch_template_name: "{{modified_LT.default_template.launch_template_name}}"
+          version: "{{modified_LT.default_version}}"
+      register: asg_out
 
