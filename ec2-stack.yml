@@ -20,7 +20,7 @@
       copy:
         content: "{{ sitekey_out.key.private_key }}"
         dest: "./site_loginkey.pem"
-        mode: 0600
+        mode: 0644
       when: sitekey_out.changed
 
     - name: Create security group for Load Balancer
@@ -305,7 +305,7 @@
       copy:
         src: "./site_loginkey.pem"
         dest: "provisioning/site_loginkey.pem"
-        mode: 0400
+        mode: 0644
 
     - name: Add a new variable to the vars/vpc-output_vars file
       lineinfile:
