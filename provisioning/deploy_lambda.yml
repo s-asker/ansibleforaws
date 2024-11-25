@@ -37,7 +37,7 @@
 
     - name: Render Lambda function template with variables
       template:
-        src: lambda_function.py.j2
+        src: templates/lambda_function.py.j2
         dest: /tmp/lambda_function.py
       vars:
         jenkins_base_url: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke"
@@ -48,6 +48,12 @@
       community.general.archive:
         path: /tmp/lambda_function.py
         format: zip
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /tmp/lambda_function.py.zip
+        dest: /tmp/lambda_function.zip
+
 
     - name: Attach AdministratorAccess policy to Lambda role
       community.aws.iam_policy:
