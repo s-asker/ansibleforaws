@@ -40,6 +40,12 @@
       register: ansible_machine_ip
       changed_when: false
 
+    - name: Create directory for Lambda code
+      file:
+        path: "{{ lambda_code_path }}"
+        state: directory
+        mode: '0755'
+
     - name: Render Lambda function template with variables
       template:
         src: templates/lambda_function.py.j2
