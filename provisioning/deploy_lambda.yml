@@ -86,7 +86,7 @@
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
-        handler: lambda_code.lambda_function.lambda_handler
+        handler: lambda_function.lambda_handler
         s3_bucket: "{{ s3OUT }}"
         s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
