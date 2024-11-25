@@ -1,6 +1,7 @@
 ---
 - name: Deploy Lambda function for syncing ASG instances using EventBridge
   hosts: localhost
+  ignore_errors: true
   vars:
     token: "12932"
     aws_region: "us-west-2"
