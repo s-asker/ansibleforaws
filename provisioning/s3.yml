@@ -2,6 +2,7 @@
 - hosts: localhost
   connection: local
   gather_facts: False
+  become: yes
   vars:
     template_url: "https://www.tooplate.com/zip-templates/2098_health.zip"
     download_path: "/tmp/website_template.zip"
