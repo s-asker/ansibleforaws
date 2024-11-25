@@ -1,25 +1,36 @@
-# lambda_function.py
-import boto3
-import os
-import time
-
-ec2 = boto3.client('ec2')
-ssm = boto3.client('ssm')
+import json
+import urllib.parse
+import requests
 
 def lambda_handler(event, context):
-    instance_id = event['EC2InstanceId']
-    bucket_name = os.environ['S3_BUCKET_NAME']  # Get bucket name from environment variable
-    print(f"Scaling event detected: Instance {instance_id}")
+    # Replace these placeholders with Ansible variables during deployment
+    jenkins_base_url = "{{ jenkins_base_url }}"  # Base URL for Jenkins
+    token = "{{ jenkins_token }}"               # Authentication token for Jenkins
 
-    # Wait for the instance to initialize (optional)
-    time.sleep(30)
+    try:
+        # Log the incoming SNS event
+        print(f"Received event: {json.dumps(event)}")
 
-    # Sync files from S3 to the instance using SSM
-    command = f"aws s3 sync s3://{bucket_name} /var/www/html"
+        # URL encode the SNS message to safely include it in the query string
+        encoded_message = urllib.parse.quote(sns_message)
 
-    ssm.send_command(
-        InstanceIds=[instance_id],
-        DocumentName="AWS-RunShellScript",
-        Parameters={"commands": [command]},
-    )
-    print(f"Sync initiated for instance {instance_id} from bucket {bucket_name}.")
+        # Construct the Jenkins URL with query parameters
+        jenkins_url = f"{jenkins_base_url}?token={token}"
+
+        # Send the GET request to Jenkins webhook
+        response = requests.get(jenkins_url)
+
+        # Log the response from Jenkins
+        print(f"Response from Jenkins: {response.status_code} - {response.text}")
+
+        return {
+            'statusCode': response.status_code,
+            'body': response.text
+        }
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {
+            'statusCode': 500,
+            'body': str(e)
+        }
