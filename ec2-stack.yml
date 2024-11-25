@@ -164,6 +164,11 @@
         path: ./get_instance_id.sh
         mode: '0755'
 
+    - name: Ensure script has execute permissions
+      file:
+        path: ./get_igw_id.sh
+        mode: '0755'
+
     - name: Run shell script to get instance ID and VPC info
       command: ./get_instance_id.sh
       register: ansible_vpc_id_output
