@@ -40,12 +40,6 @@
       register: ansible_machine_ip
       changed_when: false
 
-    - name: Create directory for Lambda code
-      file:
-        path: "{{ lambda_code_path }}"
-        state: directory
-        mode: '0755'
-
     - name: Render Lambda function template with variables
       template:
         src: templates/lambda_function.py.j2
@@ -58,13 +52,14 @@
       pip:
         name:
           - requests
-        chdir: "{{ lambda_code_path }}"  # Install dependencies into the lambda_code_path directory
+          # Add any other dependencies here
+        extra_args: "-t {{ lambda_code_path }}"  # Install dependencies into the lambda_code_path directory
 
     - name: Create a zip archive of Lambda code with dependencies
-      command: >
-        zip -r "{{ lambda_zip_path }}" .
-      args:
-        chdir: "{{ lambda_code_path }}"  # Ensure the zip command is run in the directory with the code and dependencies
+      community.general.archive:
+        path: "{{ lambda_code_path }}"
+        format: zip
+        dest: "{{ lambda_zip_path }}"
 
     - name: Upload Lambda code to S3
       aws_s3:
@@ -75,11 +70,11 @@
 
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{ aws_region }}"
+        region: "{{ region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
-        handler: lambda_function.lambda_handler
+        handler: lambda_code.lambda_function.lambda_handler
         s3_bucket: "{{ s3OUT }}"
         s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
@@ -92,27 +87,27 @@
     - name: Get the Lambda function ARN without the version
       command: >
         aws lambda get-function
-        --region "{{ aws_region }}"
-        --function-name "{{ lambda_out.configuration.function_name }}"
+        --region "{{ region }}"
+        --function-name "{{lambda_out.configuration.function_name}}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
 
     - debug:
-        var: lambda_function_arn.stdout.strip()
+        var: "{{lambda_function_arn.stdout.strip()}}"
 
     - name: Create alarm SNS topic
       community.aws.sns_topic:
         name: "LambdaSNS"
         state: present
-        region: "{{ aws_region }}"
+        region: "{{region}}"
       register: SNS_out
 
     - name: Update Auto Scaling Group to add notifications
       community.aws.ec2_asg:
-        name: "{{ asgOUT }}"
-        region: "{{ aws_region }}"
-        notification_topic: "{{ SNS_out.sns_arn }}"
+        name: "{{asgOUT}}"
+        region: "{{ region }}"
+        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
         notification_types:
           - autoscaling:EC2_INSTANCE_LAUNCH
       register: asg_notification_update
@@ -123,12 +118,12 @@
         --topic-arn "{{ SNS_out.sns_arn }}"
         --protocol lambda
         --notification-endpoint "{{ lambda_function_arn.stdout.strip() }}"
-        --region "{{ aws_region }}"
+        --region "{{ region }}"
 
     - name: Grant SNS permission to invoke Lambda function
       command: >
         aws lambda add-permission
-        --region "{{ aws_region }}"
+        --region "{{ region }}"
         --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
         --statement-id "SNSInvokePermission"
