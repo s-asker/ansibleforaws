@@ -6,9 +6,13 @@
     token: "12932"
     aws_region: "us-west-2"
     lambda_execution_role: "arn:aws:iam::123456789012:role/lambda-execution-role"
+    s3_bucket_name: "{{ s3OUT }}"
+    lambda_code_dir: "/tmp/lambda_code"
+    lambda_zip_path: "/tmp/lambda_function.zip"
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
+
     - name: Create IAM role for Lambda with administrative privileges
       amazon.aws.iam_role:
         name: LambdaRole
@@ -39,22 +43,22 @@
     - name: Render Lambda function template with variables
       template:
         src: templates/lambda_function.py.j2
-        dest: /tmp/lambda_function.py
+        dest: "{{ lambda_code_dir }}/lambda_function.py"
       vars:
         jenkins_base_url: "http://{{ ansible_machine_ip.stdout }}:8080/generic-webhook-trigger/invoke"
         jenkins_token: "{{ token }}"
 
+    - name: Install Python dependencies into the lambda_code_dir
+      pip:
+        requirements: /templates/requirements.txt  # Replace with the actual path to your requirements.txt
+        dest: "{{ lambda_code_dir }}"
+        state: present
 
-    - name: Create a zip archive of /path/to/foo
+    - name: Create a zip archive of the Lambda code
       community.general.archive:
-        path: /tmp/lambda_function.py
+        path: "{{ lambda_code_dir }}"
         format: zip
-
-    - name: Copy file with owner and permissions
-      ansible.builtin.copy:
-        src: /tmp/lambda_function.py.zip
-        dest: /tmp/lambda_function.zip
-
+        dest: "{{ lambda_zip_path }}"
 
     - name: Attach AdministratorAccess policy to Lambda role
       community.aws.iam_policy:
@@ -63,62 +67,70 @@
         state: present
         policy_name: "AdministratorAccess"
         policy_json: "{{ lookup('template', 'templates/policy.json.j2') }}"
+
     - name: Upload Lambda code to S3
       aws_s3:
-        bucket: "{{ s3OUT }}"
+        bucket: "{{ s3_bucket_name }}"
         object: lambda_function.zip
-        src: /tmp/lambda_function.zip
+        src: "{{ lambda_zip_path }}"
         mode: put
+
     - name: Create Lambda function to sync S3 on instance launch
       amazon.aws.lambda:
-        region: "{{ region }}"
+        region: "{{ aws_region }}"
         state: present
         name: "asg-instance-sync"
         runtime: python3.9
         handler: lambda_function.lambda_handler
-        s3_bucket: "{{ s3OUT }}"
+        s3_bucket: "{{ s3_bucket_name }}"
         s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
         memory_size: 128
         environment_variables:
-          S3_BUCKET_NAME: "{{ s3OUT }}"  # Set your bucket name here
+          S3_BUCKET_NAME: "{{ s3_bucket_name }}"  # Set your bucket name here
       register: lambda_out
+
     - name: Get the Lambda function ARN without the version
       command: >
         aws lambda get-function
-        --region "{{ region }}"
-        --function-name "{{lambda_out.configuration.function_name}}"
+        --region "{{ aws_region }}"
+        --function-name "{{ lambda_out.configuration.function_name }}"
         --query 'Configuration.FunctionArn'
         --output text
       register: lambda_function_arn
+
     - debug:
-        var: "{{lambda_function_arn.stdout.strip()}}"
+        var: "{{ lambda_function_arn.stdout.strip() }}"
+
     - name: Create alarm SNS topic
       community.aws.sns_topic:
         name: "LambdaSNS"
         state: present
-        region: "{{region}}"
+        region: "{{ aws_region }}"
       register: SNS_out
+
     - name: Update Auto Scaling Group to add notifications
       community.aws.ec2_asg:
-        name: "{{asgOUT}}"
-        region: "{{ region }}"
-        notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
+        name: "{{ asgOUT }}"
+        region: "{{ aws_region }}"
+        notification_topic: "{{ SNS_out.sns_arn }}"  # Replace with your SNS topic ARN
         notification_types:
           - autoscaling:EC2_INSTANCE_LAUNCH
       register: asg_notification_update
+
     - name: Subscribe Lambda function to SNS topic
       command: >
         aws sns subscribe
         --topic-arn "{{ SNS_out.sns_arn }}"
         --protocol lambda
         --notification-endpoint "{{ lambda_function_arn.stdout.strip() }}"
-        --region "{{ region }}"
+        --region "{{ aws_region }}"
+
     - name: Grant SNS permission to invoke Lambda function
       command: >
         aws lambda add-permission
-        --region "{{ region }}"
+        --region "{{ aws_region }}"
         --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
         --statement-id "SNSInvokePermission"

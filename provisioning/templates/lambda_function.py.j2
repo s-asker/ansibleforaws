@@ -1,6 +1,6 @@
 import json
-import subprocess
 import urllib.parse
+import requests
 
 def lambda_handler(event, context):
     # Replace these placeholders with Ansible variables during deployment
@@ -11,36 +11,21 @@ def lambda_handler(event, context):
         # Log the incoming SNS event
         print(f"Received event: {json.dumps(event)}")
 
-
         # Construct the Jenkins URL with query parameters
         jenkins_url = f"{jenkins_base_url}?token={token}"
 
-        # Construct the curl command
-        curl_command = [
-            "curl", "-X", "GET", jenkins_url
-        ]
-
-        # Execute the curl command and capture the output
-        response = subprocess.check_output(curl_command, stderr=subprocess.STDOUT)
+        # Send the GET request to Jenkins webhook
+        response = requests.get(jenkins_url)
 
         # Log the response from Jenkins
-        print(f"Response from Jenkins: {response.decode('utf-8')}")
+        print(f"Response from Jenkins: {response.status_code} - {response.text}")
 
         return {
-            'statusCode': 200,
-            'body': response.decode('utf-8')
-        }
-
-    except subprocess.CalledProcessError as e:
-        # Handle error if curl fails
-        print(f"Error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'body': f"Error calling Jenkins: {str(e)}"
+            'statusCode': response.status_code,
+            'body': response.text
         }
 
     except Exception as e:
-        # Handle any other errors
         print(f"Error: {str(e)}")
         return {
             'statusCode': 500,
