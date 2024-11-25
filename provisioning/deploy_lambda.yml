@@ -76,7 +76,7 @@
         name: "asg-instance-sync"
         runtime: python3.9
         handler: lambda_function.lambda_handler  # Ensure this points to your handler in lambda_function.py
-        s3_bucket: "{{ s3_bucket_name }}"
+        s3_bucket: "{{ s3OUT }}"
         s3_key: "lambda_function.zip"
         role: "{{ lambda_role.iam_role.arn }}"
         timeout: 60
