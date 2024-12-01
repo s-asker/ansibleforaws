@@ -52,6 +52,11 @@
           ansible_ssh_private_key_file=/var/lib/jenkins/shared_workspace/provisioning/site_loginkey.pem
         dest: "provisioning/inventory"
 
+    - name: Pause for 10 seconds after creating the inventory
+      ansible.builtin.pause:
+        seconds: 6
+        prompt: "Waiting before proceeding to backup Prometheus files..."
+
     - name: Backup the existing prometheus.yml
       ansible.builtin.copy:
         src: /etc/prometheus/prometheus.yml
