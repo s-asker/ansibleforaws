@@ -121,6 +121,7 @@
         notification_topic: "{{SNS_out.sns_arn}}"  # Replace with your SNS topic ARN
         notification_types:
           - autoscaling:EC2_INSTANCE_LAUNCH
+          - autoscaling:EC2_INSTANCE_TERMINATE
       register: asg_notification_update
 
     - name: Subscribe Lambda function to SNS topic
