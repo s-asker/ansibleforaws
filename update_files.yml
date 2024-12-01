@@ -68,6 +68,12 @@
         dest: /etc/prometheus/prometheus.yml
         mode: '0644'
 
+    - name: Generate list of node exporters from inventory
+      ansible.builtin.template:
+        src: provisioning/templates/prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+
     - name: Restart Prometheus service
       ansible.builtin.systemd:
         name: prometheus
