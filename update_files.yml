@@ -49,7 +49,7 @@
           
           [stack_inst:vars]
           ansible_user=ubuntu
-          ansible_ssh_private_key_file=site_loginkey.pem
+          ansible_ssh_private_key_file=/var/lib/jenkins/shared_workspace/provisioning/site_loginkey.pem
         dest: "provisioning/inventory"
 
     - name: Backup the existing prometheus.yml
