@@ -137,6 +137,6 @@
         --region "{{ region }}"
         --function-name "{{ lambda_function_arn.stdout.strip() }}"
         --principal sns.amazonaws.com
-        --statement-id "SNSInvokePermissions"
+        --statement-id "SNSInvokePermissions-{{ lookup('pipe', 'uuidgen') }}"
         --action "lambda:InvokeFunction"
         --source-arn "{{ SNS_out.sns_arn }}"
