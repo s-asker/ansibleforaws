@@ -2,31 +2,22 @@
 - name: s3 mounting play
   hosts: websrvgrp
   become: true
-  gather_facts: False
+  gather_facts: false
   vars:
     mount_path: "/var/www/html"
   tasks:
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
-    - name: Clear /var/www/html/ in worker nodes
-      ansible.builtin.shell: sudo rm -rf {{ mount_path }}/*
-      become: true
-      ignore_errors: yes
-
-    - name: Move files from ansibleforaws to /var/www/html
-      ansible.builtin.shell: cd {{ mount_path }} && git clone https://github.com/s-asker/ansibleforaws.git
-      become: true
-      ignore_errors: yes
-
-    - name: Move files from ansibleforaws to /var/www/html
-      ansible.builtin.command:
-        cmd: mv {{ mount_path }}/ansibleforaws/* {{ mount_path }}/
-      become: true
-      ignore_errors: yes
-
-    - name: Remove the cloned directory
-      ansible.builtin.file:
-        path: "{{ mount_path }}/ansibleforaws"
-        state: absent
+    - name: Clone repo, move contents, and cleanup
+      ansible.builtin.shell: |
+        set -e
+        rm -rf {{ mount_path }}/*
+        cd {{ mount_path }}
+        git clone --branch website https://github.com/s-asker/ansibleforaws.git temp_repo
+        shopt -s dotglob
+        mv temp_repo/* .
+        rm -rf temp_repo
+      args:
+        executable: /bin/bash
       become: true
