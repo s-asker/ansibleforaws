@@ -15,8 +15,7 @@
       ignore_errors: yes
 
     - name: Move files from ansibleforaws to /var/www/html
-      ansible.builtin.command:
-        cmd: cd {{ mount_path }} && git clone https://github.com/s-asker/ansibleforaws.git
+      ansible.builtin.shell: cd {{ mount_path }} && git clone https://github.com/s-asker/ansibleforaws.git
       become: true
       ignore_errors: yes
 
