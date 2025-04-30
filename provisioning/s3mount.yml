@@ -10,21 +10,24 @@
       include_vars: ../vars/vpc-output_vars
 
     - name: Clear /var/www/html/ in worker nodes
-      ansible.builtin.shell: sudo rm -rf {{mount_path}}/*
+      ansible.builtin.shell: sudo rm -rf {{ mount_path }}/*
       become: true
       ignore_errors: yes
 
-    - name: Install the package "s3fs-fuse"
-      ansible.builtin.apt:
-        name:
-          - s3fs
-        state: present
+    - name: Clone the repo and checkout the website branch
+      ansible.builtin.git:
+        repo: https://github.com/s-asker/ansibleforaws.git
+        dest: "{{ mount_path }}/ansibleforaws"
+        version: website
+
+    - name: Move files from ansibleforaws to /var/www/html
+      ansible.builtin.command:
+        cmd: mv {{ mount_path }}/ansibleforaws/* {{ mount_path }}/
       become: true
+      ignore_errors: yes
 
-
-    - name: Mount S3 bucket to /var/www/html using s3fs with proper permissions
-      shell: |
-        echo "{{ s3OUT }} {{ mount_path }} fuse.s3fs _netdev,allow_other,uid=33,gid=33,umask=0022,use_cache=/tmp 0 0" >> /etc/fstab
-        s3fs {{ s3OUT }} {{ mount_path }} -o iam_role=auto,allow_other,uid=33,gid=33,umask=0022,use_cache=/tmp
+    - name: Remove the cloned directory
+      ansible.builtin.file:
+        path: "{{ mount_path }}/ansibleforaws"
+        state: absent
       become: true
-
