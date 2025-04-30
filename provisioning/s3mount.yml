@@ -17,7 +17,7 @@
     - name: Clone the repo and checkout the website branch
       ansible.builtin.git:
         repo: https://github.com/s-asker/ansibleforaws.git
-        dest: "{{ mount_path }}/ansibleforaws"
+        dest: "{{ mount_path }}"
         version: website
 
     - name: Move files from ansibleforaws to /var/www/html
