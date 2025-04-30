@@ -14,11 +14,11 @@
       become: true
       ignore_errors: yes
 
-    - name: Clone the repo and checkout the website branch
-      ansible.builtin.git:
-        repo: https://github.com/s-asker/ansibleforaws.git
-        dest: "{{ mount_path }}"
-        version: website
+    - name: Move files from ansibleforaws to /var/www/html
+      ansible.builtin.command:
+        cmd: cd {{ mount_path }} && git clone https://github.com/s-asker/ansibleforaws.git
+      become: true
+      ignore_errors: yes
 
     - name: Move files from ansibleforaws to /var/www/html
       ansible.builtin.command:
