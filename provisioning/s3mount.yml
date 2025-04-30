@@ -13,10 +13,10 @@
       ansible.builtin.shell: |
         set -e
         rm -rf {{ mount_path }}/*
-        cd {{ mount_path }}
+        cd /home/ubuntu
         git clone --branch website https://github.com/s-asker/ansibleforaws.git temp_repo
         shopt -s dotglob
-        mv temp_repo/* .
+        mv -r temp_repo/* /var/www/html
         rm -rf temp_repo
       args:
         executable: /bin/bash
