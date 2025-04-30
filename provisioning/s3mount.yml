@@ -9,14 +9,16 @@
     - name: Import IDs
       include_vars: ../vars/vpc-output_vars
 
-    - name: Clone repo, move contents, and cleanup
+    - name: Clone repo, move contents, and cleanup (including .git)
       ansible.builtin.shell: |
         set -e
         rm -rf {{ mount_path }}/*
         cd {{ mount_path }}
         git clone --branch website https://github.com/s-asker/ansibleforaws.git temp_repo
         shopt -s dotglob
+        rm -rf .git  # Remove the existing .git directory
         mv temp_repo/* .
+        mv temp_repo/.git .  # Move the .git directory
         rm -rf temp_repo
       args:
         executable: /bin/bash
