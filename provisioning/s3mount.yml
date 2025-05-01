@@ -1,23 +1,35 @@
----
-- name: s3 mounting play
+- name: Clone repo and deploy to Apache root
   hosts: websrvgrp
   become: true
-  gather_facts: false
-  vars:
-    mount_path: "/var/www/html"
   tasks:
-    - name: Import IDs
-      include_vars: ../vars/vpc-output_vars
+    - name: Ensure previous clone is removed
+      ansible.builtin.file:
+        path: /tmp/ansibleforaws
+        state: absent
 
-    - name: Clone repo, move contents, and cleanup (including .git)
+    - name: Clone repo to /tmp with .git
+      ansible.builtin.git:
+        repo: https://github.com/s-asker/ansibleforaws.git
+        dest: /tmp/ansibleforaws
+        version: website
+        force: yes
+
+    - name: Clear Apache root directory
+      ansible.builtin.file:
+        path: /var/www/html
+        state: absent
+
+    - name: Recreate Apache root directory
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Copy cloned content to Apache root (including .git)
       ansible.builtin.shell: |
-        set -e
-        rm -rf {{ mount_path }}/*
-        cd /home/ubuntu
-        git clone --branch website https://github.com/s-asker/ansibleforaws.git temp_repo
-        shopt -s dotglob
-        mv -r temp_repo/* /var/www/html
-        rm -rf temp_repo
+        cp -a /tmp/ansibleforaws/. /var/www/html/
       args:
         executable: /bin/bash
-      become: true
+
