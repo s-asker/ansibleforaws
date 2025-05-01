@@ -1,0 +1,11 @@
+﻿- name: Pull latest changes into Apache root
+  hosts: websrvgrp
+  become: true
+  tasks:
+    - name: Pull latest changes from GitHub
+      ansible.builtin.git:
+        repo: https://github.com/s-asker/ansibleforaws.git
+        dest: /var/www/html
+        version: website
+        update: yes
+        force: yes
