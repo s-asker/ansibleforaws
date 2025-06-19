@@ -1,51 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="white_favicon_io/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="white_favicon_io/favicon-32x32.png"
-      media="(prefers-color-scheme: dark)"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="white_favicon_io/favicon-16x16.png"
-      media="(prefers-color-scheme: dark)"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="dark_favicon_io/favicon-32x32.png"
-      media="(prefers-color-scheme: light)"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="dark_favicon_io/favicon-16x16.png"
-      media="(prefers-color-scheme: light)"
-    />
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon.png" />
 
-    <link
-      rel="manifest"
-      href="white_favicon_io/site.webmanifest"
-      media="(prefers-color-scheme: dark)"
-    />
+    <!-- Standard Favicon (ICO format) -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <link
-      rel="manifest"
-      href="dark_favicon_io/site.webmanifest"
-      media="(prefers-color-scheme: light)"
-    />
+    <!-- SVG Favicon for Modern Browsers -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" href="favicon.svg" siezs="48x48" />
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,21 +37,21 @@
           extend: {
             colors: {
               primary: {
-                50: "#e3f6f7",
-                100: "#c7edf0",
-                200: "#a2e0e5",
-                300: "#7ed3db",
-                400: "#5ac7d1",
-                500: "#189ba8",
-                600: "#148993",
-                700: "#10767f",
-                800: "#0b646b",
-                900: "#074f57",
+                50: "#f0f7ff",
+                100: "#e0eefe",
+                200: "#bae0fd",
+                300: "#7cc8fb",
+                400: "#36adf6",
+                500: "#0c96e6",
+                600: "#0078c3", /* Main primary color */
+                700: "#0062a0",
+                800: "#005184",
+                900: "#00436d",
               },
               darkbg: {
-                700: "#5a5a60",
-                800: "#4a4957",
-                900: "#3b3a40",
+                700: "#2d3748",
+                800: "#1a202c", // Dark background
+                900: "#171923",
               },
             },
           },
@@ -99,14 +63,27 @@
       /* Apply uniform styles to inputs, selects, and textareas */
       .form-input,
       .form-select {
-        border-width: 2px !important;
+        border-width: 1px !important;
         outline: none !important;
         border-color: rgba(148, 163, 184, 0.5) !important; /* Soft Blue-Gray */
-        background-color: #2d2c2e !important; /* Dark background */
+        background-color: #1a202c !important; /* Dark background */
         color: #e5e7eb !important; /* Light gray text */
         padding: 12px;
-        border-radius: 6px;
+        border-radius: 8px;
         appearance: none;
+        transition: all 0.2s ease;
+      }
+      .logo-svg {
+        vertical-align: middle;
+        height: 4em; /* or specific height like 24px */
+        margin-right: 0.4em;
+        transform: translateY(2px); /* tweak as needed */
+      }
+
+      .form-input:focus,
+      .form-select:focus {
+        border-color: rgba(12, 150, 230, 0.7) !important;
+        box-shadow: 0 0 0 2px rgba(12, 150, 230, 0.2);
       }
 
       .form-select {
@@ -127,56 +104,83 @@
         opacity: 0.5;
         cursor: not-allowed;
       }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Custom animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      /* Gradient text */
+      .gradient-text {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(to right, #0c96e6, #36adf6);
+      }
+
+      /* Glass effect */
+      .glass-effect {
+        background: rgba(26, 32, 44, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
     </style>
   </head>
   <body
     class="font-sans antialiased dark:bg-darkbg-800 dark:text-gray-200 min-h-screen flex flex-col"
   >
-    <!-- Navigation -->
-    <nav class="dark:bg-darkbg-800 shadow-sm sticky top-0 z-50">
+    <!-- Navigation - Redesigned -->
+    <nav class="glass-effect sticky top-0 z-50 py-3">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <a href="#" class="flex-shrink-0 flex items-center">
-              <img
-                src="peakOps-white-logo.svg"
-                alt="PeakOps Logo"
-                class="h-12 w-12 text-primary-600 mr-2"
-              />
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-7">
+            <a href="#" class="flex items-center space-x-1 h-12">
+              <!-- Logo -->
+              <img src="peakOps-white-logo.svg" alt="PeakOps Logo" class="logo-svg" />
+
+              
             </a>
-            <div class="hidden sm:ml-6 sm:flex">
-              <a
-                href="blog.html"
-                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                >About</a
-              >
+            <!-- Text -->
+            
+            <div class="hidden md:flex md:ml-10 space-x-12 pl-10 ">
               <a
                 href="#services"
-                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                class="text-base font-medium text-gray-300 hover:text-primary-400 transition-colors duration-200 border-b-2 border-transparent hover:border-primary-400 pt-1"
                 >Services</a
               >
               <a
                 href="#how-it-works"
-                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                class="text-base font-medium text-gray-300 hover:text-primary-400 transition-colors duration-200 border-b-2 border-transparent hover:border-primary-400 pt-1"
                 >How It Works</a
               >
               <a
-                href="#case-studies"
-                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                >Case Studies</a
+                href="#previous-work"
+                class="text-base font-medium text-gray-300 hover:text-primary-400 transition-colors duration-200 border-b-2 border-transparent hover:border-primary-400 pt-1"
+                >Previous Work</a
               >
             </div>
           </div>
-          <div class="flex items-center">
+          <div class="flex items-center space-x-4">
             <a
               href="#schedule"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700 transition-all duration-200"
             >
               Schedule Free Audit
             </a>
             <button
               id="mobileMenuButton"
-              class="sm:hidden ml-4 inline-flex items-center justify-center p-2 rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
+              class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-colors duration-200"
             >
               <i class="fas fa-bars"></i>
             </button>
@@ -184,125 +188,100 @@
         </div>
       </div>
 
-      <!-- Mobile menu -->
-      <div
-        id="mobileMenu"
-        class="sm:hidden hidden dark:bg-darkbg-700 pb-3 px-4"
-      >
-        <div class="pt-2 pb-3 space-y-1">
-          <a
-            href="blog.html"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-            >About</a
-          >
-          <a
-            href="#services"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-            >Services</a
-          >
-          <a
-            href="#how-it-works"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-            >How It Works</a
-          >
-          <a
-            href="#case-studies"
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-            >Case Studies</a
-          >
-        </div>
+      <!-- Mobile menu - Redesigned -->
+      <div id="mobileMenu" class="md:hidden hidden px-2 pt-2 pb-3 space-y-1 sm:px-3 mt-2 border-t border-gray-700">
+        <a
+          href="#services"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors duration-200"
+          >Services</a
+        >
+        <a
+          href="#how-it-works"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors duration-200"
+          >How It Works</a
+        >
+        <a
+          href="#previous-work"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors duration-200"
+          >Previous Work</a
+        >
       </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="dark:bg-darkbg-700 pb-8 sm:pb-12">
-      <div class="pt-8 overflow-hidden sm:pt-12 lg:relative lg:py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="lg:grid lg:grid-cols-2 lg:gap-8">
-            <div class="sm:text-center md:max-w-2xl md:mx-auto lg:text-left">
-              <h1
-                class="text-4xl font-extrabold tracking-tight text-gray-800 dark:text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl"
-              >
-                <span class="block xl:inline">Ansible</span>
-                <span
-                  class="block xl:inline text-primary-600 dark:text-primary-400"
-                  >Graduation Project</span
-                >
+    <!-- Hero Section - Completely Redesigned -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-darkbg-900 to-darkbg-800 pt-16 pb-24">
+      <!-- Background decorative elements -->
+      <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div class="absolute top-10 left-10 w-64 h-64 bg-primary-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-80 h-80 bg-primary-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style="animation-delay: 1s;"></div>
+      </div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+          <div class="sm:text-center lg:text-left lg:col-span-6">
+            <div class="space-y-8 animate-fade-in">
+              <span class="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-400 bg-primary-900 rounded-full">
+                Enterprise Cloud Solutions
+              </span>
+              <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">
+                <span class="block">Optimize Your</span>
+                <span class="block gradient-text mt-2">Cloud Infrastructure</span>
               </h1>
-              <p
-                class="mt-3 text-base text-gray-600 dark:text-gray-300 sm:mt-5 sm:text-xl sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0"
-              >
-                From cost optimization to complex migrations, we help businesses
-                solve their toughest cloud challenges. Get expert DevOps support
-                and reduce your cloud bills by up to 50%.
+              <p class="mt-3 text-base text-gray-300 sm:mt-5 sm:text-xl max-w-xl">
+                From cost optimization to complex migrations, we help businesses solve their toughest cloud challenges. Get expert DevOps support and reduce your cloud bills by up to 50%.
               </p>
-              <div class="mt-8 sm:flex sm:justify-center lg:justify-start">
-                <div class="rounded-md shadow">
-                  <a
-                    href="#schedule"
-                    class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10"
-                  >
-                    Schedule a Free Consultation
-                  </a>
-                </div>
-                <div class="mt-3 sm:mt-0 sm:ml-3">
-                  <a
-                    href="#services"
-                    class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 dark:text-primary-400 bg-primary-100 dark:bg-gray-700 hover:bg-primary-200 dark:hover:bg-gray-600 md:py-4 md:text-lg md:px-10"
-                  >
-                    Our Services
-                  </a>
-                </div>
+              <div class="flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
+                <a
+                  href="#schedule"
+                  class="w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-500 md:py-4 md:text-lg md:px-10 transition-all duration-200 shadow-lg hover:shadow-primary-600/20"
+                >
+                  Schedule a Free Consultation
+                </a>
+                <a
+                  href="#services"
+                  class="w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-primary-400 text-base font-medium rounded-lg text-primary-400 bg-transparent hover:bg-primary-900 md:py-4 md:text-lg md:px-10 transition-all duration-200"
+                >
+                  Our Services
+                </a>
               </div>
             </div>
-            <div
-              class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0"
-            >
-              <div
-                class="relative mx-auto w-full rounded-lg shadow-lg lg:max-w-md"
-              >
-                <div
-                  class="relative block w-full dark:bg-gray-700 rounded-lg overflow-hidden"
-                >
-                  <div class="p-8">
-                    <div class="text-center">
-                      <div
-                        class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary-100 dark:bg-gray-600 text-primary-600 dark:text-primary-400 mb-4"
-                      >
-                        <i class="fas fa-chart-line text-2xl"></i>
-                      </div>
-                      <h2
-                        class="text-xl font-bold text-gray-800 dark:text-white"
-                      >
-                        Average Savings
-                      </h2>
-                      <div
-                        class="mt-2 text-4xl font-extrabold text-primary-600 dark:text-primary-400"
-                      >
-                        35%
-                      </div>
-                      <p class="mt-2 text-gray-600 dark:text-gray-300">
-                        Typical reduction in monthly cloud costs for our clients
-                      </p>
+          </div>
+          
+          <div class="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="relative mx-auto w-full">
+              <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary-900 to-darkbg-800 p-2 shadow-2xl">
+                <div class="bg-darkbg-800 rounded-xl overflow-hidden p-8">
+                  <div class="text-center">
+                    <div class="inline-flex items-center justify-center h-20 w-20 rounded-full bg-primary-900 text-primary-400 mb-6">
+                      <i class="fas fa-chart-line text-3xl"></i>
                     </div>
-                    <div class="mt-8 text-center">
-                      <div class="inline-flex gap-4">
-                        <!-- Fixed AWS logo -->
-                        <div
-                          class="flex items-center justify-center h-8 w-12 bg-orange-500 rounded"
-                        >
-                          <span class="text-white font-bold text-xs">AWS</span>
+                    <h2 class="text-2xl font-bold text-white">
+                      Average Client Savings
+                    </h2>
+                    <div class="mt-4 text-5xl font-extrabold gradient-text">
+                      35%
+                    </div>
+                    <p class="mt-4 text-gray-300">
+                      Typical reduction in monthly cloud costs for our clients
+                    </p>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-700">
+                      <p class="text-sm text-gray-400 mb-3">Supported Platforms</p>
+                      <div class="flex justify-center gap-6">
+                        <!-- AWS logo -->
+                        <div class="flex items-center justify-center h-10 w-16 bg-orange-500 rounded-md">
+                          <span class="text-white font-bold text-sm">AWS</span>
                         </div>
-
+                        
                         <img
                           src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg"
                           alt="Azure"
-                          class="h-8 w-auto"
+                          class="h-10 w-auto"
                         />
                         <img
                           src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg"
                           alt="Google Cloud"
-                          class="h-8 w-auto"
+                          class="h-10 w-auto"
                         />
                       </div>
                     </div>
@@ -313,389 +292,261 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Services Section -->
-    <section id="services" class="py-12 bg-gray-50 dark:bg-darkbg-800">
+    <!-- Services Section - Redesigned -->
+    <section id="services" class="py-24 dark:bg-darkbg-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h2
-            class="text-base font-semibold text-primary-600 dark:text-primary-400 tracking-wide uppercase"
-          >
-            Services
-          </h2>
-          <p
-            class="mt-1 text-4xl font-extrabold text-gray-800 dark:text-white sm:text-5xl sm:tracking-tight"
-          >
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="inline-block px-3 py-1 text-sm font-semibold text-primary-400 bg-primary-900 rounded-full">
+            OUR SERVICES
+          </span>
+          <h2 class="mt-6 text-4xl font-extrabold text-white sm:text-5xl">
             Complete Cloud Solutions
-          </p>
-          <p
-            class="max-w-xl mt-5 mx-auto text-xl text-gray-600 dark:text-gray-300"
-          >
-            From cost optimization to migration and DevOps, we handle all your
-            cloud infrastructure needs.
+          </h2>
+          <div class="mx-auto mt-4 h-1 w-24 rounded bg-primary-600 opacity-75"></div>
+          <p class="mt-6 text-xl text-gray-300">
+            From cost optimization to migration and DevOps, we handle all your cloud infrastructure needs.
           </p>
         </div>
 
-        <div class="mt-12">
-          <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+        <div class="mt-20">
+          <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <!-- Service Card 1 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-search-dollar text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-search-dollar text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Cloud Cost Optimization
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    Cloud Cost Optimization
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    We analyze your current cloud infrastructure to identify
-                    unused resources, over-provisioned services, and
-                    optimization opportunities.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Comprehensive usage analysis</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Identify idle and wasted resources</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Detailed savings report</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  We analyze your current cloud infrastructure to identify unused resources, over-provisioned services, and optimization opportunities.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Comprehensive usage analysis</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Identify idle and wasted resources</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Detailed savings report</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Get your free audit <i class="fas fa-arrow-right ml-1"></i>
+                    Get your free audit <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
             </div>
 
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+            <!-- Service Card 2 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-exchange-alt text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-exchange-alt text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Cloud Migration
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    Cloud Migration
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    We help you seamlessly migrate to the cloud or between cloud
-                    providers, ensuring minimal downtime and maximum efficiency.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Detailed migration planning</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Data transfer & verification</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Smooth cutover strategies</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  We help you seamlessly migrate to the cloud or between cloud providers, ensuring minimal downtime and maximum efficiency.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Detailed migration planning</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Data transfer & verification</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Smooth cutover strategies</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
+                    Learn more <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
             </div>
 
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+            <!-- Service Card 3 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-code-branch text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-code-branch text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      DevOps as a Service
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    DevOps as a Service
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    Get expert DevOps support to automate your infrastructure,
-                    implement CI/CD pipelines, and improve operational
-                    efficiency.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Infrastructure as Code</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>CI/CD pipeline implementation</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Monitoring & alerts setup</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  Get expert DevOps support to automate your infrastructure, implement CI/CD pipelines, and improve operational efficiency.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Infrastructure as Code</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>CI/CD pipeline implementation</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Monitoring & alerts setup</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
+                    Learn more <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
             </div>
 
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+            <!-- Service Card 4 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-server text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-server text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Managed Cloud Hosting
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    Managed Cloud Hosting
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    Let us handle your cloud infrastructure so you can focus on
-                    your core business. We provide 24/7 monitoring and support.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>24/7 infrastructure monitoring</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Automated backups & recovery</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Security patching & updates</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  Let us handle your cloud infrastructure so you can focus on your core business. We provide 24/7 monitoring and support.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>24/7 infrastructure monitoring</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Automated backups & recovery</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Security patching & updates</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
+                    Learn more <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
             </div>
 
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+            <!-- Service Card 5 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-tools text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-tools text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Problem Resolution
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    Problem Resolution
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    Facing issues with your cloud infrastructure? Our experts
-                    can diagnose and fix complex problems quickly and
-                    efficiently.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Performance troubleshooting</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Security incident response</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Architecture optimization</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  Facing issues with your cloud infrastructure? Our experts can diagnose and fix complex problems quickly and efficiently.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Performance troubleshooting</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Security incident response</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Architecture optimization</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
+                    Learn more <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
             </div>
 
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
+            <!-- Service Card 6 -->
+            <div class="group relative bg-darkbg-800 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-primary-900/20">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-primary-600/10 rounded-bl-full"></div>
+              <div class="p-8">
                 <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-chart-bar text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
+                  <div class="flex-shrink-0 bg-primary-900 rounded-lg p-4 text-primary-400">
+                    <i class="fas fa-laptop-code text-2xl"></i>
                   </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Ongoing Monitoring
-                    </h3>
-                  </div>
+                  <h3 class="ml-4 text-xl font-bold text-white">
+                    Website Development
+                  </h3>
                 </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    We provide continuous monitoring and optimization of your
-                    cloud infrastructure to ensure sustained cost efficiency and
-                    performance.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Monthly cost reports</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Proactive optimization alerts</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Quarterly optimization reviews</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
+                <p class="mt-6 text-gray-300">
+                  We offer end-to-end website development solutions to help businesses establish and enhance their digital presence.
+                </p>
+                <ul class="mt-6 space-y-3">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>Mobile-Responsive Design</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>SEO & Performance Optimization</span>
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-primary-400 mt-1 mr-3"></i>
+                    <span>E-Commerce Solutions</span>
+                  </li>
+                </ul>
+                <div class="mt-8 pt-6 border-t border-gray-700">
                   <a
                     href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
+                    class="inline-flex items-center text-primary-400 font-medium hover:text-primary-300 transition-colors duration-200"
                   >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="dark:bg-gray-700 overflow-hidden shadow rounded-lg">
-              <div class="px-6 py-8">
-                <div class="flex items-center">
-                  <div
-                    class="flex-shrink-0 bg-primary-100 dark:bg-gray-600 rounded-md p-3"
-                  >
-                    <i
-                      class="fas fa-chart-bar text-primary-600 dark:text-primary-400 text-xl"
-                    ></i>
-                  </div>
-                  <div class="ml-4">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Website Development
-                    </h3>
-                  </div>
-                </div>
-                <div class="mt-4 text-gray-600 dark:text-gray-300">
-                  <p>
-                    We offer end-to-end website development solutions to help
-                    businesses establish and enhance their digital presence. Our
-                    service is designed to deliver fast, secure, and scalable
-                    websites that drive engagement and conversions.
-                  </p>
-                  <ul class="mt-4 space-y-2">
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>Mobile-Responsive Design</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>SEO & Performance Optimization</span>
-                    </li>
-                    <li class="flex">
-                      <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
-                      <span>E-Commerce Solutions</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-600 px-6 py-3">
-                <div class="text-sm">
-                  <a
-                    href="#schedule"
-                    class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500"
-                  >
-                    Learn more <i class="fas fa-arrow-right ml-1"></i>
+                    Learn more <i class="fas fa-arrow-right ml-2"></i>
                   </a>
                 </div>
               </div>
@@ -705,195 +556,159 @@
       </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="py-12 dark:bg-darkbg-700">
+    <!-- How It Works Section - Redesigned -->
+    <section id="how-it-works" class="py-24 bg-gradient-to-b from-darkbg-800 to-darkbg-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h2
-            class="text-base font-semibold text-primary-600 dark:text-primary-400 tracking-wide uppercase"
-          >
-            Process
-          </h2>
-          <p
-            class="mt-1 text-4xl font-extrabold text-gray-800 dark:text-white sm:text-5xl sm:tracking-tight"
-          >
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="inline-block px-3 py-1 text-sm font-semibold text-primary-400 bg-primary-900 rounded-full">
+            OUR PROCESS
+          </span>
+          <h2 class="mt-6 text-4xl font-extrabold text-white sm:text-5xl">
             How It Works
-          </p>
-          <p
-            class="max-w-xl mt-5 mx-auto text-xl text-gray-600 dark:text-gray-300"
-          >
+          </h2>
+          <div class="mx-auto mt-4 h-1 w-24 rounded bg-primary-600 opacity-75"></div>
+          <p class="mt-6 text-xl text-gray-300">
             Our simple 4-step process to optimize your cloud infrastructure
           </p>
         </div>
 
-        <div class="mt-12">
-          <div class="relative">
-            <!-- Steps for medium and large screens -->
-            <div class="hidden md:block">
-              <div
-                class="absolute inset-0 flex items-center"
-                aria-hidden="true"
-              >
-                <div
-                  class="w-full border-t border-gray-300 dark:border-gray-700"
-                ></div>
-              </div>
-              <div class="relative flex justify-between">
-                <div class="relative flex flex-col items-center">
-                  <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                  >
-                    <span class="text-lg font-bold">1</span>
-                  </div>
-                  <div class="mt-4 text-center max-w-xs">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Initial Assessment
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                      Schedule a free consultation where we learn about your
-                      cloud infrastructure and goals.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="relative flex flex-col items-center">
-                  <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                  >
-                    <span class="text-lg font-bold">2</span>
-                  </div>
-                  <div class="mt-4 text-center max-w-xs">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Cloud Audit
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                      We analyze your cloud usage and identify optimization
-                      opportunities using specialized tools.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="relative flex flex-col items-center">
-                  <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                  >
-                    <span class="text-lg font-bold">3</span>
-                  </div>
-                  <div class="mt-4 text-center max-w-xs">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Recommendations
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                      We present a detailed report with specific recommendations
-                      and projected savings.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="relative flex flex-col items-center">
-                  <div
-                    class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                  >
-                    <span class="text-lg font-bold">4</span>
-                  </div>
-                  <div class="mt-4 text-center max-w-xs">
-                    <h3
-                      class="text-lg font-medium text-gray-800 dark:text-white"
-                    >
-                      Implementation
-                    </h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                      We implement the approved recommendations and set up
-                      monitoring to ensure ongoing optimization.
-                    </p>
-                  </div>
-                </div>
-              </div>
+        <div class="mt-16 relative">
+          <!-- Steps for medium and large screens -->
+          <div class="hidden md:block">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t-2 border-gray-700 mt-2"></div>
             </div>
-
-            <!-- Steps for small screens -->
-            <div class="md:hidden space-y-8">
-              <div class="flex">
-                <div
-                  class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                >
-                  <span class="text-lg font-bold">1</span>
+            <div class="relative flex justify-between">
+              <!-- Step 1 -->
+              <div class="relative flex flex-col items-center">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                  <span class="text-xl font-bold">1</span>
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
+                <div class="mt-6 text-center max-w-xs">
+                  <h3 class="text-xl font-bold text-white">
                     Initial Assessment
                   </h3>
-                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    Schedule a free consultation where we learn about your cloud
-                    infrastructure and goals.
+                  <p class="mt-3 text-gray-300">
+                    Schedule a free consultation where we learn about your cloud infrastructure and goals.
                   </p>
                 </div>
               </div>
 
-              <div class="flex">
-                <div
-                  class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                >
-                  <span class="text-lg font-bold">2</span>
+              <!-- Step 2 -->
+              <div class="relative flex flex-col items-center">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                  <span class="text-xl font-bold">2</span>
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
+                <div class="mt-6 text-center max-w-xs">
+                  <h3 class="text-xl font-bold text-white">
                     Cloud Audit
                   </h3>
-                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    We analyze your cloud usage and identify optimization
-                    opportunities using specialized tools.
+                  <p class="mt-3 text-gray-300">
+                    We analyze your cloud usage and identify optimization opportunities using specialized tools.
                   </p>
                 </div>
               </div>
 
-              <div class="flex">
-                <div
-                  class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                >
-                  <span class="text-lg font-bold">3</span>
+              <!-- Step 3 -->
+              <div class="relative flex flex-col items-center">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                  <span class="text-xl font-bold">3</span>
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
+                <div class="mt-6 text-center max-w-xs">
+                  <h3 class="text-xl font-bold text-white">
                     Recommendations
                   </h3>
-                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    We present a detailed report with specific recommendations
-                    and projected savings.
+                  <p class="mt-3 text-gray-300">
+                    We present a detailed report with specific recommendations and projected savings.
                   </p>
                 </div>
               </div>
 
-              <div class="flex">
-                <div
-                  class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-primary-600 text-white"
-                >
-                  <span class="text-lg font-bold">4</span>
+              <!-- Step 4 -->
+              <div class="relative flex flex-col items-center">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                  <span class="text-xl font-bold">4</span>
                 </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
+                <div class="mt-6 text-center max-w-xs">
+                  <h3 class="text-xl font-bold text-white">
                     Implementation
                   </h3>
-                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                    We implement the approved recommendations and set up
-                    monitoring to ensure ongoing optimization.
+                  <p class="mt-3 text-gray-300">
+                    We implement the approved recommendations and set up monitoring to ensure ongoing optimization.
                   </p>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Steps for small screens -->
+          <div class="md:hidden space-y-12">
+            <!-- Step 1 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                <span class="text-xl font-bold">1</span>
+              </div>
+              <div class="mt-6 max-w-xs">
+                <h3 class="text-xl font-bold text-white">
+                  Initial Assessment
+                </h3>
+                <p class="mt-3 text-gray-300">
+                  Schedule a free consultation where we learn about your cloud infrastructure and goals.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                <span class="text-xl font-bold">2</span>
+              </div>
+              <div class="mt-6 max-w-xs">
+                <h3 class="text-xl font-bold text-white">
+                  Cloud Audit
+                </h3>
+                <p class="mt-3 text-gray-300">
+                  We analyze your cloud usage and identify optimization opportunities using specialized tools.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                <span class="text-xl font-bold">3</span>
+              </div>
+              <div class="mt-6 max-w-xs">
+                <h3 class="text-xl font-bold text-white">
+                  Recommendations
+                </h3>
+                <p class="mt-3 text-gray-300">
+                  We present a detailed report with specific recommendations and projected savings.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="flex flex-col items-center text-center">
+              <div class="flex items-center justify-center w-16 h-16 rounded-full bg-primary-600 text-white shadow-lg">
+                <span class="text-xl font-bold">4</span>
+              </div>
+              <div class="mt-6 max-w-xs">
+                <h3 class="text-xl font-bold text-white">
+                  Implementation
+                </h3>
+                <p class="mt-3 text-gray-300">
+                  We implement the approved recommendations and set up monitoring to ensure ongoing optimization.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="mt-16 text-center">
+        <div class="mt-20 text-center">
           <a
             href="#schedule"
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700"
+            class="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg shadow-lg text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700 transition-all duration-200"
           >
             Get Started Today
           </a>
@@ -901,533 +716,553 @@
       </div>
     </section>
 
-    <!-- Case Studies Section -->
-    <section id="case-studies" class="py-12 bg-gray-50 dark:bg-darkbg-800">
+    <!-- Previous Work Section - Keeping as is since the user likes it -->
+    <section id="previous-work" class="py-12 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h2
-            class="text-base font-semibold text-primary-600 dark:text-primary-400 tracking-wide uppercase"
-          >
-            Results
+        <!-- Section Header with Enhanced Styling -->
+        <div class="text-center mb-16 relative">
+          <div class="absolute left-1/2 transform -translate-x-1/2 -top-10 w-20 h-20 bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-xl"></div>
+          <span class="inline-block px-4 py-1.5 rounded-full text-primary-600 dark:text-primary-400 text-md font-medium relative z-10">
+            OUR SUCCESS STORIES
+          </span>
+          <h2 class="text-4xl font-extrabold text-gray-800 mt-3 dark:text-white sm:text-5xl sm:tracking-tight">
+            Featured <span class="text-primary-600 dark:text-primary-400">Projects</span>
           </h2>
-          <p
-            class="mt-1 text-4xl font-extrabold text-gray-800 dark:text-white sm:text-5xl sm:tracking-tight"
-          >
-            Client Success Stories
-          </p>
-          <p
-            class="max-w-xl mt-5 mx-auto text-xl text-gray-600 dark:text-gray-300"
-          >
-            See how we've helped organizations like yours achieve significant
-            cost savings
+          <div class="mx-auto mt-4 h-1 w-24 rounded bg-primary-600 dark:bg-primary-400 opacity-75"></div>
+          <p class="max-w-2xl mt-6 mx-auto text-xl text-gray-600 dark:text-gray-300">
+            Explore some of the projects we've successfully delivered for our clients, 
+            demonstrating our expertise in cloud infrastructure and DevOps.
           </p>
         </div>
 
-        <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <div class="dark:bg-gray-700 shadow overflow-hidden rounded-lg">
-            <div class="px-6 py-8">
+
+        <!-- Restructured Portfolio Grid with Enhanced Cards -->
+        <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Sobekit Application Migrations Card - Enhanced -->
+          <div class="group relative bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-20 h-20 bg-primary-500/10 dark:bg-primary-500/5 rounded-bl-full z-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-600/10 to-primary-400/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <!-- Card Header with Logo -->
+            <div class="h-48 bg-gradient-to-r from-primary-50 to-gray-50 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center p-4 border-b-4 border-primary-500/30 dark:border-primary-700 relative">
+              <img src="Sobekit.png" alt="Sobekit" class="max-h-32 max-w-[80%] object-contain relative z-10" />
+              <!-- Decorative Circles -->
+              <div class="absolute top-4 left-4 w-8 h-8 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
+              <div class="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
+            </div>
+            
+            <!-- Card Content -->
+            <div class="p-6 relative z-10">
               <div class="flex items-center mb-4">
-                <div
-                  class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center"
-                >
-                  <span
-                    class="text-lg font-bold text-gray-500 dark:text-gray-300"
-                    >E</span
-                  >
-                </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
-                    E-commerce Platform
-                  </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-300">AWS</p>
-                </div>
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mr-3 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </span>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                  SobekIT Application Migrations
+                </h3>
               </div>
-              <blockquote class="mt-3 text-gray-600 dark:text-gray-300">
-                <p>
-                  "Our AWS bill was skyrocketing as we scaled. PeakOps
-                  identified over-provisioned resources and implemented
-                  auto-scaling, cutting our monthly costs by 42% without
-                  sacrificing performance."
+              <p class="text-gray-600 dark:text-gray-300">
+                We migrated SobekIT's applications Kadas, Kadasfundi, and
+                Eyuchat, along with their databases, to new servers configured
+                for scalability, performance, and reliability.
+              </p>
+              
+              <!-- Tags with Enhanced Styling -->
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800">Scalability</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800">Migration</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">Performance</span>
+              </div>
+              
+              <!-- Results Section with Enhanced Styling -->
+              <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-600">
+                <span class="text-sm font-medium text-primary-600 dark:text-primary-400">Project Results</span>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Enhanced reliability and performance while reducing infrastructure costs.
                 </p>
-              </blockquote>
-              <div class="mt-6">
-                <div class="flex items-center text-sm">
-                  <i
-                    class="fas fa-tag text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Monthly Savings: $5,800</span
-                  >
-                </div>
-                <div class="flex items-center text-sm mt-1">
-                  <i
-                    class="fas fa-percentage text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Cost Reduction: 42%</span
-                  >
-                </div>
               </div>
+              
+              <!-- View Details Button -->
+              
             </div>
           </div>
 
-          <div class="dark:bg-gray-700 shadow overflow-hidden rounded-lg">
-            <div class="px-6 py-8">
+          <!-- Sobekit QueryBot Card - Enhanced -->
+          <div class="group relative bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-20 h-20 bg-primary-500/10 dark:bg-primary-500/5 rounded-bl-full z-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-600/10 to-primary-400/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <!-- Card Header with Logo -->
+            <div class="h-48 bg-gradient-to-r from-primary-50 to-gray-50 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center p-4 border-b-4 border-primary-500/30 dark:border-primary-700 relative">
+              <img src="Sobekit.png" alt="Sobekit" class="max-h-32 max-w-[80%] object-contain relative z-10" />
+              <!-- Decorative Circles -->
+              <div class="absolute top-4 left-4 w-8 h-8 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
+              <div class="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
+            </div>
+            
+            <!-- Card Content -->
+            <div class="p-6 relative z-10">
               <div class="flex items-center mb-4">
-                <div
-                  class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center"
-                >
-                  <span
-                    class="text-lg font-bold text-gray-500 dark:text-gray-300"
-                    >S</span
-                  >
-                </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
-                    SaaS Startup
-                  </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-300">
-                    Google Cloud
-                  </p>
-                </div>
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mr-3 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                  </svg>
+                </span>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                  SobekIT QueryBot
+                </h3>
               </div>
-              <blockquote class="mt-3 text-gray-600 dark:text-gray-300">
-                <p>
-                  "We were running out of our initial funding and needed to
-                  extend our runway. The PeakOps team found numerous idle
-                  resources and helped us implement a more efficient
-                  architecture that reduced our GCP costs by 38%."
+              <p class="text-gray-600 dark:text-gray-300">
+                We deployed QueryBot, an AI tool for SobekIT's Emalyami app,
+                converting natural language into database queries. The setup
+                involved configuring services, securing with SSL, and linking to
+                a custom domain.
+              </p>
+              
+              <!-- Tags with Enhanced Styling -->
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">AI Integration</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">SSL Security</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">Custom Domain</span>
+              </div>
+              
+              <!-- Results Section with Enhanced Styling -->
+              <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-600">
+                <span class="text-sm font-medium text-primary-600 dark:text-primary-400">Project Results</span>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Seamless integration into the admin panel, enhancing Emalyami's efficiency.
                 </p>
-              </blockquote>
-              <div class="mt-6">
-                <div class="flex items-center text-sm">
-                  <i
-                    class="fas fa-tag text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Monthly Savings: $3,200</span
-                  >
-                </div>
-                <div class="flex items-center text-sm mt-1">
-                  <i
-                    class="fas fa-percentage text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Cost Reduction: 38%</span
-                  >
-                </div>
               </div>
+              
+              <!-- View Details Button -->
+              
             </div>
           </div>
 
-          <div class="dark:bg-gray-700 shadow overflow-hidden rounded-lg">
-            <div class="px-6 py-8">
-              <div class="flex items-center mb-4">
-                <div
-                  class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center"
-                >
-                  <span
-                    class="text-lg font-bold text-gray-500 dark:text-gray-300"
-                    >F</span
-                  >
-                </div>
-                <div class="ml-4">
-                  <h3 class="text-lg font-medium text-gray-800 dark:text-white">
-                    FinTech Company
-                  </h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-300">Azure</p>
-                </div>
+          <!-- Ansiblizer Card - Enhanced -->
+          <div class="group relative bg-white dark:bg-gray-700 shadow-lg hover:shadow-xl rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-20 h-20 bg-primary-500/10 dark:bg-primary-500/5 rounded-bl-full z-0"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-600/10 to-primary-400/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            <!-- Card Header with Logo -->
+            <div class="h-48 bg-gradient-to-r from-primary-50 to-gray-50 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center p-4 border-b-4 border-primary-500/30 dark:border-primary-700 relative">
+              <div class="bg-white dark:bg-gray-800 p-4 rounded-full shadow-md relative z-10">
+                <img src="ansible.png.webp" alt="Ansiblizer" class="h-24 w-24 object-contain" />
               </div>
-              <blockquote class="mt-3 text-gray-600 dark:text-gray-300">
-                <p>
-                  "As a financial services company, we need high performance but
-                  were overpaying. PeakOps helped us implement reserved
-                  instances and right-size our VMs, resulting in a 29% cost
-                  reduction while maintaining our strict performance
-                  requirements."
-                </p>
-              </blockquote>
-              <div class="mt-6">
-                <div class="flex items-center text-sm">
-                  <i
-                    class="fas fa-tag text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Monthly Savings: $7,400</span
-                  >
-                </div>
-                <div class="flex items-center text-sm mt-1">
-                  <i
-                    class="fas fa-percentage text-primary-600 dark:text-primary-400 mr-2"
-                  ></i>
-                  <span class="text-gray-600 dark:text-gray-300"
-                    >Cost Reduction: 29%</span
-                  >
-                </div>
-              </div>
+              <!-- Decorative Circles -->
+              <div class="absolute top-4 left-4 w-8 h-8 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
+              <div class="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-primary-500/20 dark:bg-primary-500/10"></div>
             </div>
+            
+            <!-- Card Content -->
+            <div class="p-6 relative z-10">
+              <div class="flex items-center mb-4">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mr-3 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                </span>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                  PeakOps: Ansiblizer
+                </h3>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300">
+                Our custom automation tool for server management and deployment. 
+                It streamlines provisioning and web app deployment while integrating 
+                with monitoring tools like Prometheus and Grafana.
+              </p>
+              
+              <!-- Tags with Enhanced Styling -->
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800">Automation</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-800">Monitoring</span>
+                <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 border border-pink-200 dark:border-pink-800">Scalability</span>
+              </div>
+              
+              <!-- Results Section with Enhanced Styling -->
+              <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-600">
+                <span class="text-sm font-medium text-primary-600 dark:text-primary-400">Key Benefits</span>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Fast deployments, consistent configurations, and robust monitoring for high-availability infrastructure.
+                </p>
+              </div>
+              
+              <!-- View Details Button -->
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 dark:text-white">35+</h3>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Projects Completed</p>
+          </div>
+          
+          <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 dark:text-white">$2.5M+</h3>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Client Savings</p>
+          </div>
+          
+          <div class="bg-white dark:bg-gray-700 rounded-xl shadow-lg p-6 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 dark:text-white">98%</h3>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Client Satisfaction</p>
+          </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="mt-16 text-center">
+          <div class="inline-block bg-gradient-to-r from-primary-500 to-primary-600 dark:from-primary-600 dark:to-primary-700 p-1 rounded-lg shadow-lg">
+            <a href="#schedule" class="inline-flex items-center px-8 py-3 border border-transparent text-base font-semibold rounded-lg bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300">
+              Start Your Project
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Scheduling Section -->
-    <section id="schedule" class="py-12 dark:bg-darkbg-700">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h2
-            class="text-base font-semibold text-primary-600 dark:text-primary-400 tracking-wide uppercase"
-          >
-            Schedule
-          </h2>
-          <p
-            class="mt-1 text-4xl font-extrabold text-gray-800 dark:text-white sm:text-5xl sm:tracking-tight"
-          >
-            Book Your Free Consultation
-          </p>
-          <p
-            class="max-w-xl mt-5 mx-auto text-xl text-gray-600 dark:text-gray-300"
-          >
-            Schedule a 30-minute call with our cloud optimization experts to
-            discuss your needs and learn how we can help
-          </p>
-        </div>
+<!-- Scheduling Section - Redesigned with Enhanced Background and Hover Effects -->
+<section id="schedule" class="py-24 relative overflow-hidden">
+  <!-- Enhanced Background with Grid Pattern and Gradients -->
+  <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-darkbg-900 to-darkbg-800 opacity-95"></div>
+  
+  <!-- Grid Pattern Overlay -->
+  <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+  
+  <!-- Decorative Elements -->
+  <div class="absolute top-20 left-1/4 w-96 h-96 bg-primary-600/5 rounded-full blur-[100px]"></div>
+  <div class="absolute bottom-20 right-1/4 w-96 h-96 bg-primary-600/5 rounded-full blur-[100px]"></div>
+  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-radial from-primary-900/10 to-transparent opacity-70"></div>
+  
+  <!-- Content Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center max-w-3xl mx-auto">
+      <span class="inline-block px-3 py-1 text-sm font-semibold text-primary-400 bg-primary-900/80 rounded-full shadow-glow-sm">
+        GET STARTED
+      </span>
+      <h2 class="mt-6 text-4xl font-extrabold text-white sm:text-5xl text-shadow-sm">
+        Book Your Free Consultation
+      </h2>
+      <div class="mx-auto mt-4 h-1 w-24 rounded bg-primary-500 opacity-80 shadow-glow-sm"></div>
+      <p class="mt-6 text-xl text-gray-300">
+        Schedule a 30-minute call with our cloud optimization experts to discuss your needs and learn how we can help
+      </p>
+    </div>
 
-        <div class="mt-12 max-w-lg mx-auto">
-          <div
-            class="bg-gray-50 dark:bg-darkbg-700 shadow overflow-hidden rounded-lg"
-          >
-            <div class="px-6 py-8">
-              <form id="schedulingForm" class="space-y-6">
-                <div>
-                  <label
-                    for="name"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Full Name
-                  </label>
-                  <div class="mt-1">
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                      class="form-input block w-full"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="email"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Email
-                  </label>
-                  <div class="mt-1">
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      class="form-input block w-full"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="company"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Company
-                  </label>
-                  <div class="mt-1">
-                    <input
-                      type="text"
-                      name="company"
-                      id="company"
-                      class="form-input block w-full"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="phone"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Phone Number
-                  </label>
-                  <div class="mt-1">
-                    <input
-                      type="tel"
-                      name="phone"
-                      id="phone"
-                      class="form-input block w-full"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="serviceInterest"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    I'm Interested In
-                  </label>
-                  <div class="mt-1">
-                    <select
-                      id="serviceInterest"
-                      name="serviceInterest"
-                      class="form-input block w-full"
-                      required
-                    >
-                      <option value="">Select a service</option>
-                      <option value="costOptimization">
-                        Cloud Cost Optimization
-                      </option>
-                      <option value="migration">Cloud Migration</option>
-                      <option value="devops">DevOps as a Service</option>
-                      <option value="hosting">Managed Cloud Hosting</option>
-                      <option value="problemSolving">Problem Resolution</option>
-                      <option value="monitoring">Ongoing Monitoring</option>
-                      <option value="multiple">Multiple Services</option>
-                      <option value="Website Development">
-                        Website Development
-                      </option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="cloudProvider"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Cloud Provider
-                  </label>
-                  <div class="mt-1">
-                    <select
-                      id="cloudProvider"
-                      name="cloudProvider"
-                      class="form-input block w-full"
-                      required
-                    >
-                      <option value="">Select your cloud provider</option>
-                      <option value="AWS">AWS</option>
-                      <option value="Azure">Microsoft Azure</option>
-                      <option value="GCP">Google Cloud</option>
-                      <option value="Multiple">Multiple Providers</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    for="message"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Tell us about your needs or challenges
-                  </label>
-                  <div class="mt-1">
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows="4"
-                      class="form-input py-3 px-4 block w-full shadow-sm focus:ring-primary-500 focus:border-primary-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md text-base"
-                    ></textarea>
-                  </div>
-                </div>
-
-                <div>
-                  <button
-                    type="submit"
-                    class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700"
-                  >
-                    Schedule Consultation
-                  </button>
-                </div>
-              </form>
+    <div class="mt-16 max-w-lg mx-auto">
+      <!-- Form container with hover effect -->
+      <div class="bg-gray-900/70 shadow-xl overflow-hidden rounded-xl border border-gray-700/50 transition-all duration-300 hover:shadow-glow hover:shadow-primary-600/20 hover:border-primary-500/50 backdrop-blur-sm">
+        <!-- Decorative corner accents -->
+        <div class="absolute top-0 right-0 w-20 h-20 bg-primary-500/10 rounded-bl-full"></div>
+        <div class="absolute bottom-0 left-0 w-20 h-20 bg-primary-500/10 rounded-tr-full"></div>
+        
+        <div class="px-8 py-10 relative">
+          <form id="schedulingForm" class="space-y-6 relative z-10" autocomplete="on">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-200">
+                Full Name
+              </label>
+              <div class="mt-1">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  class="form-input block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  required
+                  placeholder="Your name"
+                />
+              </div>
             </div>
-          </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-200">
+                Email
+              </label>
+              <div class="mt-1">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  class="form-input block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  required
+                  placeholder="your.email@example.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="company" class="block text-sm font-medium text-gray-200">
+                Company
+              </label>
+              <div class="mt-1">
+                <input
+                  type="text"
+                  name="company"
+                  id="company"
+                  class="form-input block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  required
+                  placeholder="Your company name"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-200">
+                Phone Number
+              </label>
+              <div class="mt-1">
+                <input
+                  type="tel"
+                  name="phone"
+                  id="phone"
+                  class="form-input block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="serviceInterest" class="block text-sm font-medium text-gray-200">
+                I'm Interested In
+              </label>
+              <div class="relative mt-1">
+                <select
+                  id="serviceInterest"
+                  name="serviceInterest"
+                  class="form-select block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  required
+                >
+                  <option value="">Select a service</option>
+                  <option value="costOptimization">Cloud Cost Optimization</option>
+                  <option value="migration">Cloud Migration</option>
+                  <option value="devops">DevOps as a Service</option>
+                  <option value="hosting">Managed Cloud Hosting</option>
+                  <option value="problemSolving">Problem Resolution</option>
+                  <option value="monitoring">Ongoing Monitoring</option>
+                  <option value="multiple">Multiple Services</option>
+                  <option value="Website Development">Website Development</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="cloudProvider" class="block text-sm font-medium text-gray-200">
+                Cloud Provider
+              </label>
+              <div class="relative mt-1">
+                <select
+                  id="cloudProvider"
+                  name="cloudProvider"
+                  class="form-select block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  required
+                >
+                  <option value="">Select your cloud provider</option>
+                  <option value="AWS">AWS</option>
+                  <option value="Azure">Microsoft Azure</option>
+                  <option value="GCP">Google Cloud</option>
+                  <option value="Multiple">Multiple Providers</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-200">
+                Tell us about your needs or challenges
+              </label>
+              <div class="mt-1">
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="4"
+                  class="form-input block w-full bg-gray-800/80 border-gray-600 focus:border-primary-500 focus:ring focus:ring-primary-500/30 text-white transition-all duration-200"
+                  placeholder="How can we help you?"
+                ></textarea>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                class="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700 transition-all duration-200"
+              >
+                <span>Schedule Consultation</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+  
+  <!-- Additional Decorative Elements -->
+  <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-darkbg-900/90 to-transparent"></div>
+</section>
 
-    <!-- Footer -->
-    <footer class="dark:bg-darkbg-800 border-t border-darkbg-700">
-      <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div class="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div class="space-y-8 xl:col-span-1">
+<style>
+/* Grid pattern for background */
+.bg-grid-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%235D5CDE' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Radial gradient background */
+.bg-gradient-radial {
+  background-image: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Soft text shadow for better contrast on dark backgrounds */
+.text-shadow-sm {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle glow effect */
+.shadow-glow-sm {
+  box-shadow: 0 0 15px rgba(93, 92, 222, 0.2);
+}
+</style>
+
+    <!-- Footer - Redesigned -->
+    <footer class="bg-darkbg-900 border-t border-gray-800 pt-16 pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div class="col-span-1 md:col-span-2">
             <div class="flex items-center">
               <img
                 src="peakOps-white-logo.svg"
                 alt="PeakOps Logo"
-                class="h-12 w-12 text-primary-600 mr-2"
+                class="h-10 w-10 text-primary-600 mr-2"
               />
-              <span class="text-xl font-bold text-gray-700 dark:text-white"
-                >PeakOps</span
-              >
+              <span class="text-xl font-bold text-white">PeakOps</span>
             </div>
-            <p class="text-gray-600 dark:text-gray-300 text-base">
-              We help businesses optimize, migrate, and maintain their cloud
-              infrastructure to maximize performance and minimize costs.
+            <p class="mt-4 text-gray-300 text-base max-w-md">
+              We help businesses optimize, migrate, and maintain their cloud infrastructure to maximize performance and minimize costs.
             </p>
-            <div class="text-sm text-gray-600 dark:text-gray-300">
-              <p>
-                Email:
-                <a
-                  href="mailto:contact@peakops.cloud"
-                  class="text-primary-600 dark:text-primary-400 hover:underline"
-                  >contact@peakops.cloud</a
-                >
+            <div class="mt-6 space-y-2 text-gray-300">
+              <p class="flex items-center">
+                <i class="fas fa-envelope text-primary-400 mr-3"></i>
+                <a href="mailto:contact@peakops.cloud" class="hover:text-primary-400 transition-colors duration-200">
+                  contact@peakops.cloud
+                </a>
               </p>
-              <p>
-                Phone:
-                <a
-                  href="tel:+201008736669"
-                  class="text-primary-600 dark:text-primary-400 hover:underline"
-                  >+(20)1008736669</a
-                >
+              <p class="flex items-center">
+                <i class="fas fa-phone text-primary-400 mr-3"></i>
+                <a href="tel:+201008736669" class="hover:text-primary-400 transition-colors duration-200">
+                  +(20) 100 873 6669
+                </a>
               </p>
-            </div>
-            <div class="flex space-x-6">
-              <a
-                href="https://www.linkedin.com/company/peakops-cloud/"
-                class="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-              >
-                <i class="fab fa-linkedin text-xl"></i>
-              </a>
             </div>
           </div>
-          <div class="mt-12 grid grid-cols-2 gap-8 xl:mt-0 xl:col-span-2">
-            <div class="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3
-                  class="text-sm font-semibold text-gray-500 dark:text-gray-300 tracking-wider uppercase"
-                >
-                  Services
-                </h3>
-                <ul class="mt-4 space-y-4">
-                  <li>
-                    <a
-                      href="#services"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Cloud Cost Optimization
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#services"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Cloud Migration
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#services"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      DevOps as a Service
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#services"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Managed Cloud Hosting
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#services"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Website Development
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="mt-12 md:mt-0">
-                <h3
-                  class="text-sm font-semibold text-gray-500 dark:text-gray-300 tracking-wider uppercase"
-                >
-                  Company
-                </h3>
-                <ul class="mt-4 space-y-4">
-                  <li>
-                    <a
-                      href="#case-studies"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Case Studies
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="blog.html"
-                      class="text-base text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    >
-                      Blog
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4">Services</h3>
+            <ul class="space-y-3">
+              <li>
+                <a href="#services" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Cloud Cost Optimization
+                </a>
+              </li>
+              <li>
+                <a href="#services" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Cloud Migration
+                </a>
+              </li>
+              <li>
+                <a href="#services" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  DevOps as a Service
+                </a>
+              </li>
+              <li>
+                <a href="#services" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Managed Cloud Hosting
+                </a>
+              </li>
+              <li>
+                <a href="#services" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Website Development
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4">Company</h3>
+            <ul class="space-y-3">
+              <li>
+                <a href="#previous-work" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Previous Work
+                </a>
+              </li>
+              <li>
+                <a href="blog.html" class="text-gray-300 hover:text-primary-400 transition-colors duration-200">
+                  Blog
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
-          <p class="text-base text-gray-500 dark:text-gray-400 text-center">
+        
+        <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+          <p class="text-gray-400">
             &copy; 2025 PeakOps. All rights reserved.
           </p>
         </div>
       </div>
     </footer>
 
-    <!-- Success Modal for Form Submissions -->
-    <div
-      id="successModal"
-      class="fixed inset-0 flex items-center justify-center z-50 hidden"
-    >
-      <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-      <div
-        class="relative dark:bg-gray-700 rounded-lg max-w-md w-full mx-4 p-6 shadow-xl"
-      >
-        <div class="text-center">
-          <div
-            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-800"
-          >
-            <i
-              class="fas fa-check text-green-600 dark:text-green-400 text-xl"
-            ></i>
-          </div>
-          <h3
-            class="mt-4 text-lg font-medium text-gray-800 dark:text-white"
-            id="modalTitle"
-          >
-            Success!
-          </h3>
-          <p class="mt-2 text-gray-500 dark:text-gray-300" id="modalMessage">
-            Your message has been sent. We'll get back to you shortly.
-          </p>
-          <div class="mt-6">
-            <button
-              id="closeModal"
-              class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+    <!-- Success/Error Modal for Form Submissions -->
+<div id="successModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+  <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+  <div class="relative bg-darkbg-800 rounded-xl max-w-md w-full mx-4 p-8 shadow-2xl border border-gray-700">
+    <div class="text-center">
+      <div id="modalIcon" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-900 text-green-400">
+        <i class="fas fa-check text-2xl"></i>
+      </div>
+      <h3 class="mt-6 text-xl font-bold text-white" id="modalTitle">
+        Success!
+      </h3>
+      <p class="mt-3 text-gray-300" id="modalMessage">
+        Your message has been sent. We'll get back to you shortly.
+      </p>
+      <div class="mt-8">
+        <button
+          id="closeModal"
+          class="inline-flex justify-center rounded-lg border border-transparent shadow-lg px-6 py-3 bg-primary-600 text-base font-medium text-white hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-700 transition-all duration-200"
+        >
+          Close
+        </button>
       </div>
     </div>
+  </div>
+</div>
+
 
     <script>
       // Mobile menu toggle
@@ -1438,68 +1273,104 @@
         mobileMenu.classList.toggle("hidden");
       });
 
-      // Handle form submission
-      const schedulingForm = document.getElementById("schedulingForm");
-      const contactForm = document.getElementById("contactForm");
-      const successModal = document.getElementById("successModal");
-      const closeModal = document.getElementById("closeModal");
-      const modalTitle = document.getElementById("modalTitle");
-      const modalMessage = document.getElementById("modalMessage");
+      document.addEventListener('DOMContentLoaded', function() {
+    // Get form and modal elements
+    const schedulingForm = document.getElementById("schedulingForm");
+    const successModal = document.getElementById("successModal");
+    const closeModal = document.getElementById("closeModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalMessage = document.getElementById("modalMessage");
+    const modalIcon = document.getElementById("modalIcon");
 
+    // Make sure the form exists before adding event listener
+    if (schedulingForm) {
       schedulingForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        console.log("Form submitted"); // Debug log
+        
+        // Get submit button to show loading state
+        const submitButton = schedulingForm.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        
+        // Show loading state
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+        submitButton.disabled = true;
 
-        const formData = {
-          name: document.getElementById("name").value,
-          email: document.getElementById("email").value,
-          company: document.getElementById("company").value,
-          serviceInterest: document.getElementById("serviceInterest").value,
-          cloudProvider: document.getElementById("cloudProvider").value,
-          message: document.getElementById("message").value,
-        };
+        try {
+          const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            company: document.getElementById("company").value,
+            serviceInterest: document.getElementById("serviceInterest").value,
+            cloudProvider: document.getElementById("cloudProvider").value,
+            message: document.getElementById("message").value,
+            phone: document.getElementById("phone").value,
+          };
+          
+          console.log("Sending form data:", formData); // Debug log
 
-        const response = await fetch(
-          "https://7fm7dx0tr0.execute-api.eu-north-1.amazonaws.com/submit",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
+          const response = await fetch(
+            "https://7fm7dx0tr0.execute-api.eu-north-1.amazonaws.com/submit",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            }
+          );
+
+          console.log("Response status:", response.status); // Debug log
+          
+          if (response.ok) {
+            console.log("Form submission successful"); // Debug log
+            modalTitle.textContent = "Consultation Scheduled!";
+            modalMessage.textContent = `Thanks, ${formData.name}! We'll email you shortly with confirmation details.`;
+            
+            // Show success icon
+            if (modalIcon) {
+              modalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-900 text-green-400";
+              modalIcon.innerHTML = '<i class="fas fa-check text-2xl"></i>';
+            }
+            
+            successModal.classList.remove("hidden");
+            schedulingForm.reset();
+          } else {
+            const errorData = await response.text();
+            console.error("Form submission failed:", errorData); // Debug log
+            modalTitle.textContent = "Something went wrong";
+            modalMessage.textContent = "We couldn't process your request. Please try again or contact us directly.";
+            
+            // Show error icon
+            if (modalIcon) {
+              modalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-900 text-red-400";
+              modalIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-2xl"></i>';
+            }
+            
+            successModal.classList.remove("hidden");
           }
-        );
-
-        if (response.ok) {
-          modalTitle.textContent = "Consultation Scheduled!";
-          modalMessage.textContent = `Thanks, ${formData.name}! We'll email you shortly.`;
+        } catch (error) {
+          console.error("Form submission error:", error); // Debug log
+          modalTitle.textContent = "Connection Error";
+          modalMessage.textContent = "Unable to connect to our server. Please check your internet connection and try again.";
+          
+          // Show X icon for connection errors
+          if (modalIcon) {
+            modalIcon.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-900 text-red-400";
+            modalIcon.innerHTML = '<i class="fas fa-times text-2xl"></i>';
+          }
+          
           successModal.classList.remove("hidden");
-          schedulingForm.reset();
-        } else {
-          alert("Error submitting form.");
+        } finally {
+          // Restore button state
+          submitButton.innerHTML = originalButtonText;
+          submitButton.disabled = false;
         }
       });
+    } else {
+      console.error("Form element not found!"); // Debug log
+    }
 
-      contactForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        // Get form data
-        const firstName = document.getElementById("contactFirstName").value;
-        const lastName = document.getElementById("contactLastName").value;
-        const email = document.getElementById("contactEmail").value;
-        const subject = document.getElementById("contactSubject").value;
-        const service = document.getElementById("contactService").value;
-        const message = document.getElementById("contactMessage").value;
-
-        // In a real app, you'd send this data to your server or an email service
-        // For this demo, we'll just simulate a successful submission
-
-        // Show success message
-        modalTitle.textContent = "Message Sent!";
-        modalMessage.textContent = `Thanks, ${firstName}! We've received your message about ${service} and will get back to you shortly.`;
-        successModal.classList.remove("hidden");
-
-        // Reset form
-        contactForm.reset();
-      });
-
+    // Modal close functionality
+    if (closeModal && successModal) {
       closeModal.addEventListener("click", () => {
         successModal.classList.add("hidden");
       });
@@ -1510,28 +1381,32 @@
           successModal.classList.add("hidden");
         }
       });
+    } else {
+      console.error("Modal elements not found!"); // Debug log
+    }
+  });
 
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
 
-          const targetId = this.getAttribute("href");
-          if (targetId === "#") return;
+      const targetId = this.getAttribute("href");
+      if (targetId === "#") return;
 
-          const targetElement = document.querySelector(targetId);
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: "smooth",
-            });
-
-            // Close mobile menu if open
-            if (!mobileMenu.classList.contains("hidden")) {
-              mobileMenu.classList.add("hidden");
-            }
-          }
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: "smooth",
         });
-      });
+
+        // Close mobile menu if open
+        if (!mobileMenu.classList.contains("hidden")) {
+          mobileMenu.classList.add("hidden");
+        }
+      }
+    });
+  });
     </script>
   </body>
 </html>
